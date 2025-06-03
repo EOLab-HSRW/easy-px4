@@ -61,7 +61,7 @@ class BuildCommand(Command):
         parser.add_argument("--output",
                             default=".",
                             type=valid_dir_path,
-                            help="Path to the output directory")
+                            help="Path to the output directory (only applicable to firmware)")
 
 
         parser.add_argument("--dry-run",
@@ -99,7 +99,7 @@ class BuildCommand(Command):
 
     def execute(self, args: Namespace) -> None:
 
-        directory = load_directory(args.path)
+        directory = load_directory(args.path, args.type)
 
         info = directory.info
 
@@ -122,7 +122,7 @@ class BuildCommand(Command):
         self.logger.info(f"Checking out to version {self.original_tag}")
         git_checkout = run_command(['git', 'checkout', self.original_tag], cwd=PX4_DIR)
         if git_checkout['returncode'] != 0:
-            self.logger.error(f"Failed to checkout to {self.original_tag}. Make sure if a valid px4 version. {git_checkout['stderr']}")
+            self.logger.error(f"Failed to checkout to {self.original_tag}. Make sure is a valid px4 version. {git_checkout['stderr']}")
             sys.exit(1)
 
         self.logger.info("Syncronizing submodules")
@@ -141,11 +141,13 @@ class BuildCommand(Command):
             tooling_cmd = ["bash", "./Tools/setup/ubuntu.sh", "--no-sim-tools"]
             target_px4board = PX4_DIR / "boards"/ info.vendor / info.model / f"{info.name}.px4board"
             airframes = PX4_DIR / "ROMFS" / "px4fmu_common" / "init.d" / "airframes"
+            airframe_insert_match = "[4000, 4999] Quadrotor x"
             target = f"{info.vendor}_{info.model}_{info.name}"
         elif args.type == "sitl":
             tooling_cmd = ["bash", "./Tools/setup/ubuntu.sh"]
             target_px4board = PX4_DIR / "boards"/ info.vendor / "sitl" / f"{info.name}.px4board"
             airframes = PX4_DIR / "ROMFS" / "px4fmu_common" / "init.d-posix" / "airframes" 
+            airframe_insert_match = "# [22000, 22999] Reserve for custom models"
             target = f"{info.vendor}_sitl_{info.name}"
 
 
@@ -160,7 +162,7 @@ class BuildCommand(Command):
 
         shutil.copy2(args.path / directory.params_file, target_airframe)
 
-        self.__prepend_insertion(airframes_CMakeLists, "[4000, 4999] Quadrotor x", airframe_file)
+        self.__prepend_insertion(airframes_CMakeLists, airframe_insert_match, airframe_file)
 
         CMakeLists_init = PX4_DIR / "ROMFS" / "px4fmu_common" / "init.d" / "CMakeLists.txt"
 
