@@ -11,7 +11,7 @@ class FileRule:
     required: bool = True
 
 
-class BaseFolderStructure(ABC):
+class BaseDirectoryStructure(ABC):
     def __init__(self):
         self.rules = self.get_rules()
 
@@ -33,7 +33,7 @@ class BaseFolderStructure(ABC):
             raise FileNotFoundError(f"Missing required files: {', '.join(missing)}")
 
 
-class SITLFolderStructure(BaseFolderStructure):
+class SITLDirectoryStructure(BaseDirectoryStructure):
     def get_rules(self) -> list[FileRule]:
         return [
             FileRule("info_file", "info.toml"),
@@ -43,7 +43,7 @@ class SITLFolderStructure(BaseFolderStructure):
 
 
 
-class FirmwareFolderStructure(BaseFolderStructure):
+class FirmwareDirectoryStructure(BaseDirectoryStructure):
     def get_rules(self) -> list[FileRule]:
         return [
             FileRule("info_file", "info.toml"),
@@ -70,32 +70,32 @@ def valid_dir_path(path: Union[str, Path]) -> Path:
     return directory
 
 class Directory:
-    def __init__(self, folder: Union[str, Path], build_type: str):
+    def __init__(self, path: Union[str, Path], dir_type: str):
 
-        self.folder = valid_dir_path(folder)
+        self.directory = valid_dir_path(path)
 
-        self.build_type = build_type
+        self.dir_type = dir_type
 
         self.__structure = self.__validate_structure()
 
         for rule in self.__structure.get_rules():
             setattr(self, rule.prop_name, rule.file_name)
 
-        self.info = load_info(self.folder / self.__structure.info_file)
+        self.info = load_info(self.directory / self.__structure.info_file)
 
     def __validate_structure(self):
         structure = None
-        if self.build_type == "sitl":
-            structure = SITLFolderStructure()
-        elif self.build_type == "firmware":
-            structure = FirmwareFolderStructure()
+        if self.dir_type == "sitl":
+            structure = SITLDirectoryStructure()
+        elif self.dir_type == "firmware":
+            structure = FirmwareDirectoryStructure()
         else:
-            raise ValueError(f"Unknown build type: {self.build_type}")
+            raise ValueError(f"Unknown build type: {self.dir_type}")
 
-        structure.validate(self.folder)
+        structure.validate(self.directory)
         return structure
 
 
-def load_directory(path: Union[str, Path]) -> Directory:
+def load_directory(path: Union[str, Path], dir_type: str) -> Directory:
 
-    return Directory(path, build_type="firmware")
+    return Directory(path, dir_type)
