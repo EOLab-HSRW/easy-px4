@@ -1,0 +1,118 @@
+#!/bin/sh
+#
+# @name EOLab Protoflyer
+#
+# @type Quadrotor x
+# @class Copter
+#
+# @output Motor1 motor 1
+# @output Motor2 motor 2
+# @output Motor3 motor 3
+# @output Motor4 motor 4
+#
+# @maintainer Harley Lara <contact@harleylara.com>
+# @url https://drones.eolab.de/protoflyer/README.html
+#
+
+. ${R}etc/init.d/rc.mc_defaults
+. ${R}etc/init.d/rc.radiomaster_tx16s # radio params
+
+SYSTEM=${SYSTEM:=real}
+
+param set-default MAV_TYPE 2
+
+if [ "$SYSTEM" = "real" ]; then
+    echo "Running real system."
+
+    param set-default PWM_MAIN_FUNC1 101
+    param set-default PWM_MAIN_FUNC2 102
+    param set-default PWM_MAIN_FUNC3 103
+    param set-default PWM_MAIN_FUNC4 104
+
+    #####################################
+    # ESC Calibration
+    #####################################
+
+    param set-default PWM_MAIN_MIN1 1150
+    param set-default PWM_MAIN_MAX1 1900
+
+    param set-default PWM_MAIN_MIN2 1150
+    param set-default PWM_MAIN_MAX2 1900
+
+    param set-default PWM_MAIN_MIN3 1150
+    param set-default PWM_MAIN_MAX3 1900
+
+    param set-default PWM_MAIN_MIN4 1150
+    param set-default PWM_MAIN_MAX4 1900
+
+    #####################################
+    ## Sensors
+    #####################################
+
+
+    param set-default BAT1_V_DIV 12.05273533
+
+elif [ "$SYSTEM" = "gz" ]; then
+    param set-default SIM_GZ_EN 1
+
+    # harley note: check this to move to gazebo?
+    param set-default SENS_EN_GPSSIM 1
+    param set-default SENS_EN_BAROSIM 0
+    param set-default SENS_EN_MAGSIM 1
+
+    param set-default SIM_GZ_EC_FUNC1 101
+    param set-default SIM_GZ_EC_FUNC2 102
+    param set-default SIM_GZ_EC_FUNC3 103
+    param set-default SIM_GZ_EC_FUNC4 104
+
+    param set-default SIM_GZ_EC_MIN1 150
+    param set-default SIM_GZ_EC_MIN2 150
+    param set-default SIM_GZ_EC_MIN3 150
+    param set-default SIM_GZ_EC_MIN4 150
+
+    param set-default SIM_GZ_EC_MAX1 1000
+    param set-default SIM_GZ_EC_MAX2 1000
+    param set-default SIM_GZ_EC_MAX3 1000
+    param set-default SIM_GZ_EC_MAX4 1000
+fi
+
+
+#####################################
+# FMU placement and orientation
+#####################################
+
+param set-default EKF2_IMU_POS_X 0
+param set-default EKF2_IMU_POS_Y 0
+param set-default EKF2_IMU_POS_Z 0
+
+#####################################
+# Actuators
+#####################################
+
+param set-default CA_ROTOR_COUNT 4
+
+param set-default CA_ROTOR0_PX 0.158
+param set-default CA_ROTOR0_PY 0.158
+
+param set-default CA_ROTOR1_PX -0.158
+param set-default CA_ROTOR1_PY -0.158
+
+param set-default CA_ROTOR2_PX 0.158
+param set-default CA_ROTOR2_PY -0.158
+param set-default CA_ROTOR2_KM -0.05
+
+param set-default CA_ROTOR3_PX -0.158
+param set-default CA_ROTOR3_PY 0.158
+param set-default CA_ROTOR3_KM -0.05
+
+
+#####################################
+## Battery
+#####################################
+param set-default BAT1_SOURCE 0
+param set-default BAT1_N_CELLS 4
+param set-default BAT1_V_CHARGED 4.02
+param set-default BAT1_V_EMPTY 3.7
+param set-default BAT1_CAPACITY 7000
+# TODO: 
+# - BAT1_R_INTERNAL
