@@ -66,6 +66,10 @@ class BuildCommand(Command):
                             action="store_true",
                             help="Run build with clean build artifacs")
 
+        parser.add_argument("--overwrite",
+                            action="store_true",
+                            help="Build firmware independently if it is present on the build folder")
+
         # Parameters check
         # see if the parameter is set to default
         # check if the parameter exist ?
@@ -73,8 +77,6 @@ class BuildCommand(Command):
                             default=False,
                             type=bool,
                             help="Parameter check. Check if the parameter are set with the right default-value")
-
-        # caching ?
 
 
     def __prepend_insertion(self, file: Path, match: str, insert: str):
@@ -111,6 +113,24 @@ class BuildCommand(Command):
 
         info = directory.info
 
+        if args.type == "firmware":
+            tooling_cmd = ["bash", "./Tools/setup/ubuntu.sh", "--no-sim-tools"]
+            target_px4board = PX4_DIR / "boards"/ info.vendor / info.model / f"{info.name}.px4board"
+            init_romfs = PX4_DIR / "ROMFS" / "px4fmu_common" / "init.d"
+            airframe_insert_match = "[4000, 4999] Quadrotor x"
+            target = f"{info.vendor}_{info.model}_{info.name}"
+        elif args.type == "sitl":
+            tooling_cmd = ["bash", "./Tools/setup/ubuntu.sh"]
+            target_px4board = PX4_DIR / "boards"/ info.vendor / "sitl" / f"{info.name}.px4board"
+            init_romfs = PX4_DIR / "ROMFS" / "px4fmu_common" / "init.d-posix"
+            airframe_insert_match = "# [22000, 22999] Reserve for custom models"
+            target = f"{info.vendor}_sitl_{info.name}"
+
+        if not args.overwrite:
+            if (PX4_DIR / "build" / target).exists():
+                self.logger.info(f"It was found that the targe {target} has already built. If you want to overwrite it use lag --overwrite")
+                sys.exit(0)
+
         # STEP: fetch all the tags
         fetch_res = run_command(['git', 'fetch', '--tags', '--force'], cwd=PX4_DIR)
         if fetch_res['returncode'] != 0:
@@ -145,18 +165,6 @@ class BuildCommand(Command):
 
         run_command(['git', 'tag', self.target_tag, self.commit_hash], cwd=PX4_DIR, check=True)
 
-        if args.type == "firmware":
-            tooling_cmd = ["bash", "./Tools/setup/ubuntu.sh", "--no-sim-tools"]
-            target_px4board = PX4_DIR / "boards"/ info.vendor / info.model / f"{info.name}.px4board"
-            init_romfs = PX4_DIR / "ROMFS" / "px4fmu_common" / "init.d"
-            airframe_insert_match = "[4000, 4999] Quadrotor x"
-            target = f"{info.vendor}_{info.model}_{info.name}"
-        elif args.type == "sitl":
-            tooling_cmd = ["bash", "./Tools/setup/ubuntu.sh"]
-            target_px4board = PX4_DIR / "boards"/ info.vendor / "sitl" / f"{info.name}.px4board"
-            init_romfs = PX4_DIR / "ROMFS" / "px4fmu_common" / "init.d-posix"
-            airframe_insert_match = "# [22000, 22999] Reserve for custom models"
-            target = f"{info.vendor}_sitl_{info.name}"
 
         airframes = init_romfs / "airframes"
         always_init_d = PX4_DIR / "ROMFS" / "px4fmu_common" / "init.d"
