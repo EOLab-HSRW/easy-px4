@@ -1,3 +1,4 @@
+from pathlib import Path
 import tomli
 import pytest
 import easy_px4
@@ -13,6 +14,10 @@ def test_load_info_good():
         custom_fw_version = "0.0.2"
     """)
 
+    info_test_file = Path(__file__).resolve().parent.parent / "demos" / "drones" / "protoflyer" / "info.toml"
+    easy_px4.load_info(info_test_file)
+    easy_px4.load_info(str(info_test_file))
+
 def test_load_info_missing_key():
 
     with pytest.raises(KeyError):
@@ -23,8 +28,6 @@ def test_load_info_missing_key():
             px4_version = "v1.15.4"
             custom_fw_version = "0.0.2"
         """)
-
-
 
 def test_load_info_components():
     info = easy_px4.load_info("""

@@ -29,25 +29,25 @@ class Info:
 
 class InfoManager:
 
-    def __init__(self, path: Union[str, Path]) -> None:
+    def __init__(self, input_info: Union[str, Path]) -> None:
 
         self.__content: str | None = None
 
-        if isinstance(path, str):
-            possible_path = Path(path)
+        if isinstance(input_info, str):
+            possible_path = Path(input_info)
             if possible_path.is_file():
                 self.path = possible_path
             else:
                 self.path = None
-                self.__content = path
-        elif isinstance(path, Path):
-            if path.is_file():
-                self.path = path
+                self.__content = input_info
+        elif isinstance(input_info, Path):
+            if input_info.is_file():
+                self.path = input_info
             else:
-                raise FileNotFoundError(f"{path} is not a file.")
+                raise FileNotFoundError(f"{input_info} is not a file.")
 
         else:
-            raise TypeError(f"path must be str or Path, got {type(path).__name__}")
+            raise TypeError(f"path must be str or Path, got {type(input_info).__name__}")
 
         self.__info_dict_raw: dict = self.__parse()
         self.__info = self.__load_dict(self.__info_dict_raw)
@@ -55,7 +55,6 @@ class InfoManager:
 
     def __parse(self) -> dict:
         try:
-
             if self.__content is not None:
                 info = tomllib.loads(self.__content)
             elif self.path is not None:
