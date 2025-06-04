@@ -1,5 +1,6 @@
-import logging
+import os
 import sys
+import logging
 
 # ANSI escape codes for colors
 LOG_COLORS = {
@@ -21,8 +22,12 @@ class ColoredCommandFormatter(logging.Formatter):
         record.msg = f"{level} [{command}] {record.msg}"
         return super().format(record)
 
+# Check DEBUG=1 from environme
+debug_enabled = os.getenv("DEBUG") == "1"
+log_level = logging.DEBUG if debug_enabled else logging.INFO
+
 _base_logger = logging.getLogger(__package__)
-_base_logger.setLevel(logging.DEBUG)
+_base_logger.setLevel(log_level)
 
 if not _base_logger.handlers:
     handler = logging.StreamHandler(sys.stdout)
