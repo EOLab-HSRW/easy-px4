@@ -62,6 +62,10 @@ class BuildCommand(Command):
                             action="store_true",
                             help="Run build without actually building anything (for testing)")
 
+        parser.add_argument("--clean-run",
+                            action="store_true",
+                            help="Run build with clean build artifacs")
+
         # Parameters check
         # see if the parameter is set to default
         # check if the parameter exist ?
@@ -71,7 +75,6 @@ class BuildCommand(Command):
                             help="Parameter check. Check if the parameter are set with the right default-value")
 
         # caching ?
-        # clean run ?
 
 
     def __prepend_insertion(self, file: Path, match: str, insert: str):
@@ -188,7 +191,10 @@ class BuildCommand(Command):
 
 
         self.logger.info(f"Ready to build custom firmware for target {target}")
-        run_command(["make", "clean"], cwd=PX4_DIR)
+
+        if args.clean_run:
+            run_command(["make", "clean"], cwd=PX4_DIR)
+
         build_px4 = run_command(["make", target], 
                                 cwd=PX4_DIR,
                                 stdout=subprocess.PIPE,
