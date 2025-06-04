@@ -2,6 +2,12 @@
 
 A simple tool to help to build custom firmware.
 
+## Install
+
+```
+pip install git+https://github.com/EOLab-HSRW/easy-px4.git:main
+```
+
 ## How to Use
 
 ```text
