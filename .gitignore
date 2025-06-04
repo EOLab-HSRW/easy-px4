@@ -1,0 +1,15 @@
+*.px4
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments / dependency management
+*.egg
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+pip-log.txt
+poetry.lock
+Pipfile.lock
