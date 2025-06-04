@@ -49,8 +49,8 @@ class InfoManager:
         else:
             raise TypeError(f"path must be str or Path, got {type(path).__name__}")
 
-        info_dict: dict = self.__parse()
-        self.__info = self.__load_dict(info_dict)
+        self.__info_dict_raw: dict = self.__parse()
+        self.__info = self.__load_dict(self.__info_dict_raw)
 
 
     def __parse(self) -> dict:
@@ -175,17 +175,18 @@ class InfoManager:
     def get_info(self) -> Info:
         return self.__info
 
+    @property
+    def info(self) -> dict:
+        return self.__info_dict_raw
 
-def load_info(path: Path) -> Info:
+def load_info(info: Union[str, Path]) -> InfoManager:
     """
     Load info.toml file from path.
     """
-    return InfoManager(path).get_info()
+    return InfoManager(info)
 
-
-def parse_directory(directory: str):
-    path = Path(directory)
-    if not path.is_dir():
-        raise ArgumentTypeError(f"{path} is not a valid directory.")
-    return path
-
+def load_info_dict(info: Union[str, Path]) -> dict[str, dict]:
+    """
+    Load info.toml file from path.
+    """
+    return InfoManager(info).info

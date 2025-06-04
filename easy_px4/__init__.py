@@ -1,3 +1,5 @@
+from .api import *
+
 CATALOG: dict[str, dict]  = {
     "protoflyer": {
         "frame_id": 22105

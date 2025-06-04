@@ -140,7 +140,7 @@ class BuildCommand(Command):
         self.logger.debug(f"Loading directory {args.path} as {args.type}")
         directory = load_directory(args.path, args.type)
 
-        info = directory.info
+        info = directory.get_info()
         self.logger.debug(f"Info: {info}")
 
         tooling_cmd, px4board, init_romfs_dir, airframe_match, target = {

@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from dataclasses import dataclass
 from typing import Union
-from .info import load_info
+from .info import Info, load_info
 
 @dataclass(frozen=True)
 class FileRule:
@@ -81,7 +81,8 @@ class Directory:
         for rule in self.__structure.get_rules():
             setattr(self, rule.prop_name, rule.file_name)
 
-        self.info = load_info(self.directory / self.__structure.info_file)
+        self.__info_manager = load_info(self.directory / self.__structure.info_file)
+        self.__info = self.__info_manager.get_info()
 
     def __validate_structure(self):
         structure = None
@@ -94,6 +95,13 @@ class Directory:
 
         structure.validate(self.directory)
         return structure
+
+    def get_info(self) -> Info:
+        return self.__info
+
+    @property
+    def info(self) -> dict:
+        return self.__info_manager.info
 
 
 def load_directory(path: Union[str, Path], dir_type: str) -> Directory:
