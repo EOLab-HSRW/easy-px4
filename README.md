@@ -10,7 +10,17 @@ your_config/
 ├─ params.airframe (required)
 ├─ board.modules (required only in -physical- board builds)
 ├─ sitl.modules (required only in Software In The Loop builds)
+
+components/
+├─ script_1
+├─ ...
+├─ script_n
 ```
+
+```sh
+easy_px4 build --type firmware --path ./your_config --comps ./components/
+```
+
 
 Description of files:
 - `info.toml`: contains meta information required for setup and firmware generation.
@@ -25,9 +35,7 @@ On `info.toml` values
 - `model` (mandatory string): The board model: `sitl`, `fmu-v4`, `fmu-v5`, etc.
 - `px4_version` (mandatory string): PX4 version to be compiled in format `v<int>.<int>.<int>`. Do not forget to add the lowercase `v` letter prependix the semantic version.
 - `custom_fw_version` (optional string): Default `0.0.0`. This option allows you to enter your custom firmware version, but also allows you to compile specific PX4 versions such as `rc1`, `beta1`, `alpha`, in `[rc|beta|alpha]<int>` format.
-- `default_components` (optional string or list of strings): Default `None`. Add startup scripts into the firmware that can be use later to initialize components.:
-
-(harley's note) planning to remove `[components]`
+- `components` (optional string or list of strings): Default `None`. Add startup scripts into the firmware that can be use later to initialize components.:
 
 ## Why?
 
