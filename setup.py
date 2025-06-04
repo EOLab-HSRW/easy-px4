@@ -16,7 +16,6 @@ with (Path(__file__).resolve().parent / "README.md").open(encoding='utf-8') as f
 
 def common_install() -> None:
 
-
     WORK_DIR = Path().home() / f".{__package__}"
     WORK_DIR.mkdir(exist_ok=True)
 
@@ -61,7 +60,7 @@ setup(
     url='https://github.com/EOLab-HSRW/easy-px4.git',
     author='Harley Lara',
     author_email='harley.lara@outlook.com',
-    description='A helper tool to build custom PX4 firmware',
+    description='A helper tool to build custom PX4 firmwares',
     long_description=long_description,
     long_description_content_type='text/markdown',
     packages=find_packages(),
