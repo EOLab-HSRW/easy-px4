@@ -15,7 +15,7 @@
 #
 
 . ${R}etc/init.d/rc.mc_defaults
-. ${R}etc/init.d/rc.radiomaster_tx16s # radio params
+. ${R}etc/init.d/radiomaster_tx16s # radio params
 
 SYSTEM=${SYSTEM:=real}
 

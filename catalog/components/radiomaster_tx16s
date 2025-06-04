@@ -1,0 +1,59 @@
+#!/bin/sh
+################################################
+# Radiomaster TX16S Mark II (ExpressLRS Radio)
+################################################
+
+################################
+# Mavlink Common
+################################
+
+# TELEM1 is used for telemetry radio link
+# enable MAVLink in TELEM1
+param set-default MAV_0_CONFIG 101
+param set-default MAV_0_MODE 0
+param set-default MAV_0_RATE 1200
+param set-default MAV_0_FORWARD 1
+param set-default SER_TEL1_BAUD 57600
+
+# disable MAVLink in TELEM2 to prevent problems with CRSF (see param RC_CRSF_PRT_CFG)
+param set-default MAV_1_CONFIG 0
+
+# select CRSF as RC protocol
+# param set-default RC_INPUT_PROTO 6 # TELEM2 as RC Input
+param set-default RC_CRSF_TEL_EN 1 # Enable CRSF Telemetry
+# enable CRSF input in TELEM2
+param set-default RC_CRSF_PRT_CFG 102 # https://docs.px4.io/main/en/advanced_config/parameter_reference.html#RC_CRSF_PRT_CFG
+
+################################
+# Parameters Radiomaster TX16S
+################################
+
+# channel mapping according to our conventions (Mode 2): https://drones.eolab.de/development/radio-setup.html#channels-mapping
+param set-default RC_MAP_ROLL 1
+param set-default RC_MAP_PITCH 2
+param set-default RC_MAP_THROTTLE 3
+param set-default RC_MAP_YAW 4
+param set-default RC_MAP_OFFB_SW 5
+param set-default RC_MAP_FLTMODE 6
+# TODO:
+# MAKE the KILL SWITCH UNIQUE (if the position of the switch return it should remains off)
+param set-default RC_MAP_KILL_SW 8
+param set-default MAN_ARM_GESTURE 1
+
+# we are using all the RCX channel with the default values:
+# MAX: 2000
+# MIN: 1000
+# TRIM: 1500
+param set-default RC6_MAX 2000
+param set-default RC6_MIN 1000
+param set-default RC6_TRIM 1500
+
+# flight modes setup, as described in https://drones.eolab.de/development/radio-setup.html#flight-modes-mapping
+param set-default COM_FLTMODE1 2 # Position
+param set-default COM_FLTMODE2 4 # Hold
+
+# Harley note:
+# For some unkown reason the RC_CHAN_CNT default value 0
+# make the flight controller detect "no manual control input"
+# should I open an issue in PX4
+param set-default RC_CHAN_CNT 16

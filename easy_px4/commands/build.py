@@ -10,8 +10,6 @@ from ..paths import PX4_DIR
 from ..runner import run_command
 
 
-
-
 class BuildCommand(Command):
     """
     Build command to handled the build of PX4.
@@ -22,14 +20,6 @@ class BuildCommand(Command):
     Clearly both are firmware but the terminology distintion is mainly
     to create a mental separation between the one running on the FMU and 
     the one for development.
-
-    The way how the build command works is by getting:
-    - type: define the type of build
-    - path: a path to a directory containing the files
-        - info.toml: information specific to the drone
-        - board.modules: list of modules to enable on hardware
-        - sitl.modules: list of modules to enable for simulation
-        - parms.airframe: airframe file defining all the parameter for the drone
     """
     cmd_name = "build"
 
@@ -57,6 +47,10 @@ class BuildCommand(Command):
                             type=valid_dir_path,
                             required=True,
                             help="Path to the directory containing all the firmware files")
+
+        parser.add_argument("--comps",
+                            type=valid_dir_path,
+                            help="Path to the directory containing components to make available in the firmware file system")
 
         parser.add_argument("--output",
                             default=".",
@@ -95,6 +89,17 @@ class BuildCommand(Command):
                 outfile.write(line)
 
         temp.replace(file)
+
+
+    def __validate_comps(self, list_components, path_components: Path) -> bool:
+        files = [f.name for f in path_components.glob('*') if f.is_file()]
+        missing_files = [component for component in list_components if component not in files]
+
+        if missing_files:
+            self.logger.error(f"The following components ({missing_files}) are not part of the directory {path_components.absolute()}")
+            sys.exit(1)
+
+        return True
 
 
     def execute(self, args: Namespace) -> None:
@@ -140,15 +145,19 @@ class BuildCommand(Command):
         if args.type == "firmware":
             tooling_cmd = ["bash", "./Tools/setup/ubuntu.sh", "--no-sim-tools"]
             target_px4board = PX4_DIR / "boards"/ info.vendor / info.model / f"{info.name}.px4board"
-            airframes = PX4_DIR / "ROMFS" / "px4fmu_common" / "init.d" / "airframes"
+            init_romfs = PX4_DIR / "ROMFS" / "px4fmu_common" / "init.d"
             airframe_insert_match = "[4000, 4999] Quadrotor x"
             target = f"{info.vendor}_{info.model}_{info.name}"
         elif args.type == "sitl":
             tooling_cmd = ["bash", "./Tools/setup/ubuntu.sh"]
             target_px4board = PX4_DIR / "boards"/ info.vendor / "sitl" / f"{info.name}.px4board"
-            airframes = PX4_DIR / "ROMFS" / "px4fmu_common" / "init.d-posix" / "airframes" 
+            init_romfs = PX4_DIR / "ROMFS" / "px4fmu_common" / "init.d-posix"
             airframe_insert_match = "# [22000, 22999] Reserve for custom models"
             target = f"{info.vendor}_sitl_{info.name}"
+
+        airframes = init_romfs / "airframes"
+        always_init_d = PX4_DIR / "ROMFS" / "px4fmu_common" / "init.d"
+        CMakeLists_init = always_init_d / "CMakeLists.txt"
 
 
         self.logger.info("Install PX4 tooling...")
@@ -164,12 +173,19 @@ class BuildCommand(Command):
 
         self.__prepend_insertion(airframes_CMakeLists, airframe_insert_match, airframe_file)
 
-        CMakeLists_init = PX4_DIR / "ROMFS" / "px4fmu_common" / "init.d" / "CMakeLists.txt"
+        if args.comps is not None:
+            if info.components is not None and self.__validate_comps(info.components, args.comps):
+                for component in info.components:
+                    shutil.copy2(args.comps / component, always_init_d / component)
+                components_normalized = " ".join(info.components) if isinstance(info.components, list) else info.components
+                self.__prepend_insertion(CMakeLists_init, "rcS", components_normalized)
+            else:
+                self.logger.info(f"No components found in {directory.info_file}. Skipping components.")
+        else:
+            if info.components is not None:
+                self.logger.error(f"Your {directory.info_file} contains components but you do not pass --comp directory")
+                sys.exit(1)
 
-        if info.components is not None:
-            self.logger.info("No components found. Skipping components.")
-            components_normalized = " ".join(info.components) if isinstance(info.components, list) else info.components
-            self.__prepend_insertion(CMakeLists_init, "rcS", components_normalized)
 
         self.logger.info(f"Ready to build custom firmware for target {target}")
         run_command(["make", "clean"], cwd=PX4_DIR)

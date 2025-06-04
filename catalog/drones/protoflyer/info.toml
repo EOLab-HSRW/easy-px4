@@ -4,4 +4,4 @@ vendor = "px4"
 model = "fmu-v3"
 px4_version = "v1.16.0"
 custom_fw_version = "rc1"
-# components = ["radiomaster_tx16s"]
+components = ["radiomaster_tx16s"]
