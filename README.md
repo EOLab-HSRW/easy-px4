@@ -5,7 +5,7 @@ A simple tool to help to build custom firmware.
 ## Install
 
 ```
-pip install git+https://github.com/EOLab-HSRW/easy-px4.git:main
+pip install git+https://github.com/EOLab-HSRW/easy-px4.git@main#egg=easy_px4
 ```
 
 ## How to Use
