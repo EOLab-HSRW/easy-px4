@@ -11,7 +11,7 @@ pip install git+https://github.com/EOLab-HSRW/easy-px4.git:main
 ## How to Use
 
 ```text
-your_config/
+easy-px4-template/
 ├─ info.toml (required)
 ├─ params.airframe (required)
 ├─ board.modules (required only in -physical- board builds)
@@ -23,8 +23,11 @@ components/
 ├─ script_n
 ```
 
+You can use the template structure from [easy-px4-template](https://github.com/EOLab-HSRW/easy-px4-template).
+
+
 ```sh
-easy_px4 build --type firmware --path ./your_config --comps ./components/
+easy_px4 build --type firmware --path ./easy-px4-template --comps ./easy-px4-template/components/
 ```
 
 
