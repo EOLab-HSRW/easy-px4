@@ -6,22 +6,27 @@ from .paths import PX4_DIR, WORK_DIR
 
 def get_dir() -> Path:
     """
-    Return the working directory.
+    Returns the working directory.
     """
     return WORK_DIR
 
 def get_px4_dir() -> Path:
     """
-    Return path to directory containing PX4-Autopilot
+    Returns path to directory containing PX4-Autopilot
     """
     return PX4_DIR
 
+def get_build_dir() -> Path:
+    """
+    Returns the build directory used by easy_px4.
+    """
+    return PX4_DIR / "build"
+
 def load_info(info: Union[str, Path]) -> dict[str, dict]:
     """
-    Load information from info.toml file.
+    Loads information from info.toml file.
 
     Args:
     - info: a multi line string, string path or Path to the file.
     """
     return load_info_dict(info)
-
