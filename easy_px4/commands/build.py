@@ -69,6 +69,10 @@ class BuildCommand(Command):
                             action="store_true",
                             help="Overwrite existing build if present.")
 
+        parser.add_argument("--msgs-output",
+                            type=valid_dir_path,
+                            help="Directory to store extracted PX4 msgs related to your build version.")
+
         parser.add_argument("--params-check",
                             action="store_true",
                             help="Check that parameters have correct default values.")
@@ -204,6 +208,33 @@ class BuildCommand(Command):
                 self.logger.error(f"{directory.info_file} defines components but no --comps provided.")
                 sys.exit(1)
 
+        if args.msgs_output:
+            self.logger.debug(f"Checking for msg/ and srv/ in {args.msgs_output}")
+            msg_src = PX4_DIR / "msg"
+            msg_versioned_src = PX4_DIR / "msg/versioned"
+            srv_src = PX4_DIR / "srv"
+            msg_dst = args.msgs_output / "msg"
+            srv_dst = args.msgs_output / "srv"
+
+            if msg_dst.exists() and msg_dst.exists():
+                self.logger.debug("Found msg and srv directories. Deleting ...")
+                shutil.rmtree(msg_dst)
+                shutil.rmtree(srv_dst)
+            else:
+                self.logger.warn(f"The provided directory {args.msgs_output} does not seem to contain the folders 'msg' and 'srv'.")
+                self.logger.warn(f"This may be intentional, or you may not be copying the files to the intended directory (usually to px4_msgs).")
+
+            self.logger.debug(f"Creating empty version of msg and srv directories.")
+            msg_dst.mkdir(parents=True, exist_ok=True)
+            srv_dst.mkdir(parents=True, exist_ok=True)
+
+            self.logger.debug(f"Copying *.msg and *.srv into {args.msgs_output}...")
+            for file in msg_src.glob("*.msg"):
+                shutil.copy(file, msg_dst)
+            for file in msg_versioned_src.glob("*.msg"):
+                shutil.copy(file, msg_dst)
+            for file in srv_src.glob("*.srv"):
+                shutil.copy(file, srv_dst)
 
         self.logger.info(f"Building firmware for target {target}")
 
