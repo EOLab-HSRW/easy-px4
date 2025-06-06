@@ -109,6 +109,11 @@ class BuildCommand(Command):
             self.logger.error(f"Failed to fetch tags: {fetch_res['stderr']}")
             sys.exit(1)
 
+        restore_res = run_command(['git', 'restore', '.'], cwd=PX4_DIR)
+        if restore_res['returncode'] != 0:
+            self.logger.error(f"Failed to restore repo tags: {restore_res['stderr']}")
+            sys.exit(1)
+
         self.logger.debug(f"Starting tag composition")
         self.original_tag = info.px4_version
 
