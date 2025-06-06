@@ -149,7 +149,7 @@ class InfoManager:
 
     def __validation_content(self, info_dict) -> bool:
 
-        if not re.fullmatch(r"v\d+\.\d+\.\d+", info_dict["px4_version"]):
+        if not re.fullmatch(r"(v\d+\.\d+\.\d+|main)", info_dict["px4_version"]):
             raise ValueError(f"'px4_version' must be in format v<int>.<int>.<int>. Got {info_dict['px4_version']}")
 
         if info_dict.get("custom_fw_version") is not None:
