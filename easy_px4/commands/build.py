@@ -111,7 +111,11 @@ class BuildCommand(Command):
 
         self.logger.debug(f"Starting tag composition")
         self.original_tag = info.px4_version
-        if any(word in info.custom_fw_version for word in ["beta", "alpha", "rc"]):
+
+        if info.px4_version == "main":
+            self.original_tag = "main"
+            self.target_tag = "main"
+        elif any(word in info.custom_fw_version for word in ["beta", "alpha", "rc"]):
             self.original_tag = f"{info.px4_version}-{info.custom_fw_version}"
             self.target_tag = self.original_tag
         else:
