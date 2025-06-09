@@ -15,14 +15,14 @@ class Command(ABC):
         self.logger = get_logger(self.cmd_name)
 
     @abstractmethod
-    def add_arguments(self, parser: ArgumentParser):
+    def add_arguments(self, parser: ArgumentParser) -> None:
         """
         Registration of arguments for the parser.
         """
         pass
 
     @abstractmethod
-    def execute(self, args: Namespace):
+    def execute(self, args: Namespace) -> None:
         """
         Action to perform while calling the command
         """
