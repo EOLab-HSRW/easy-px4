@@ -53,7 +53,6 @@ class BuildCommand(Command):
                             help="Directory with components for build filesystem.")
 
         parser.add_argument("--output",
-                            default=".",
                             type=valid_dir_path,
                             help="Output directory (firmware only).")
 
@@ -231,6 +230,7 @@ class BuildCommand(Command):
         self.logger.info(f"Building firmware for target {target}")
 
         if args.clean_run:
+            self.logger.info(f"Make clean build")
             run_command(["make", "clean"], cwd=PX4_DIR)
 
         build_px4 = run_command(
@@ -246,10 +246,12 @@ class BuildCommand(Command):
             self.logger.error(f"Build failed for {target}. {build_px4.get('stderr', '')} {build_px4.get('stdout', '')}")
             sys.exit(1)
 
+        if args.output and args.type == "firmware":
+            output_file = args.output / f"{info.name}_{info.custom_fw_version}.px4"
+            shutil.copy2(PX4_DIR / "build" / target / f"{target}.px4", output_file)
+            self.logger.info(f"firmware file in: {output_file}")
+
         self.logger.info("Done.")
-
-
-        # shutil.copy2(PX4_DIR / "build" / target / f"{target}.px4", args.output / f"{info.name}_{info.custom_fw_version}.px4")
 
         # cleaning steps
 
