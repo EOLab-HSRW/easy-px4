@@ -158,10 +158,10 @@ class BuildCommand(Command):
             ),
             "sitl": (
                 ["bash", "./Tools/setup/ubuntu.sh"],
-                PX4_DIR / "boards" / info.vendor / "sitl" / f"{info.name}.px4board",
+                PX4_DIR / "boards" / "px4" / "sitl" / f"{info.name}.px4board",
                 PX4_DIR / "ROMFS" / "px4fmu_common" / "init.d-posix",
                 "# [22000, 22999] Reserve for custom models",
-                f"{info.vendor}_sitl_{info.name}"
+                f"px4_sitl_{info.name}"
             )
         }[args.type]
 
@@ -243,7 +243,7 @@ class BuildCommand(Command):
         )
 
         if build_px4['returncode'] != 0:
-            self.logger.error(f"Build failed for {target}. {build_px4.get('stderr', '')}")
+            self.logger.error(f"Build failed for {target}. {build_px4.get('stderr', '')} {build_px4.get('stdout', '')}")
             sys.exit(1)
 
         self.logger.info("Done.")
