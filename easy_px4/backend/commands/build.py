@@ -110,7 +110,7 @@ class BuildCommand(Command):
         self.logger.debug(f"Fetching tags")
         fetch_res = run_command(['git', 'fetch', '--tags', '--force'], cwd=PX4_DIR)
         if fetch_res['returncode'] != 0:
-            self.logger.error(f"Failed to fetch tags: {fetch_res['stderr']}")
+            self.logger.error(f"Failed to fetch tags: {fetch_res['stderr']}, {fetch_res['stdout']}")
             sys.exit(1)
 
         restore_res = run_command(['git', 'restore', '.'], cwd=PX4_DIR)

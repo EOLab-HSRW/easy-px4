@@ -1,8 +1,8 @@
 from typing import Union
 from pathlib import Path
-from .utils.info import load_info_dict
+from .backend.utils.info import load_info_dict
 
-from .paths import PX4_DIR, WORK_DIR
+from .backend.paths import PX4_DIR, WORK_DIR
 
 def get_dir() -> Path:
     """

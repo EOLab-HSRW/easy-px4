@@ -1,8 +1,8 @@
 import sys
 import argparse
 
-from .commands.command import Command
-from .commands.build import BuildCommand
+from .backend.commands.command import Command
+from .backend.commands.build import BuildCommand
 
 # available command registration
 COMMAND_REGISTRY: list[type[Command]] = [

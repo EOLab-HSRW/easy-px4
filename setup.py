@@ -78,7 +78,7 @@ setup(
     },
     entry_points={
         "console_scripts": [
-            f"{__package__} = {__package__}.main:main",
+            f"{__package__} = {__package__}.__main:main",
         ],
     },
 )
