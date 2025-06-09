@@ -120,15 +120,7 @@ class BuildCommand(Command):
 
         self.logger.debug(f"Starting tag composition")
         self.original_tag = info.px4_version
-
-        if info.px4_version == "main":
-            self.original_tag = "main"
-            self.target_tag = "main"
-        elif any(word in info.custom_fw_version for word in ["beta", "alpha", "rc"]):
-            self.original_tag = f"{info.px4_version}-{info.custom_fw_version}"
-            self.target_tag = self.original_tag
-        else:
-            self.target_tag  = f"{info.px4_version}-{info.custom_fw_version}"
+        self.target_tag = f"{info.px4_version}-{info.custom_fw_version}"
         self.logger.debug(f"{self.original_tag} -> {self.target_tag}")
 
         self.logger.info(f"Checking out to version {self.original_tag}")
@@ -142,10 +134,10 @@ class BuildCommand(Command):
         run_command(["git", "submodule", "sync", "--recursive"], cwd=PX4_DIR)
         run_command(["git", "submodule", "update", "--init", "--recursive"], cwd=PX4_DIR)
 
+        self.logger.debug(f"Renaming tags from {self.original_tag} to {self.target_tag}")
         self.commit_hash = run_command(['git', 'rev-list', '-n', '1', self.original_tag], cwd=PX4_DIR)["stdout"]
         run_command(['git', 'tag', '-d', self.original_tag], cwd=PX4_DIR, check=True)
         run_command(['git', 'tag', self.target_tag, self.commit_hash], cwd=PX4_DIR, check=True)
-
 
 
     def execute(self, args: Namespace) -> None:
@@ -253,6 +245,8 @@ class BuildCommand(Command):
         if build_px4['returncode'] != 0:
             self.logger.error(f"Build failed for {target}. {build_px4.get('stderr', '')}")
             sys.exit(1)
+
+        self.logger.info("Done.")
 
 
         # shutil.copy2(PX4_DIR / "build" / target / f"{target}.px4", args.output / f"{info.name}_{info.custom_fw_version}.px4")

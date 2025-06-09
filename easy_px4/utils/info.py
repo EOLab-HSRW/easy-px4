@@ -149,16 +149,12 @@ class InfoManager:
 
     def __validation_content(self, info_dict) -> bool:
 
-        if not re.fullmatch(r"(v\d+\.\d+\.\d+|main)", info_dict["px4_version"]):
-            raise ValueError(f"'px4_version' must be in format v<int>.<int>.<int>. Got {info_dict['px4_version']}")
+        if not re.fullmatch(r'v([0-9]+)\.([0-9]+)\.[0-9]+((-dev)|(-alpha[0-9]+)|(-beta[0-9]+)|(-rc[0-9]+))?$', info_dict["px4_version"]):
+            raise ValueError(f"'px4_version' must be in format v<major>.<minor>.<patch>[-rc<rc>|-beta<beta>|-alpha<alpha>|-dev]. Got {info_dict['px4_version']}")
 
         if info_dict.get("custom_fw_version") is not None:
-            if not re.fullmatch(re.compile(r"^(beta|alpha|rc)\d+$|^\d+\.\d+\.\d+$"), info_dict["custom_fw_version"]):
-                raise ValueError(f"'custom_fw_version' must be semantic version <int>.<int>.<int> or beta<int>, alpha<int>, rc<int> got {info_dict['custom_fw_version']}"
-                )
-
-        # if info_dict.get("defualt_components") is not None:
-        #     info_dict["defualt_components"] = self.__validate_component(info_dict["defualt_components"], info_dict["components"]["compatible"])
+            if not re.fullmatch(r'([0-9]+)\.([0-9]+)\.([0-9]+)((-dev)|(-alpha[0-9]+)|(-beta[0-9]+)|(-?rc[0-9]+))?$', info_dict['custom_fw_version']):
+                raise ValueError(f"'custom_fw_version' must be semantic version <major>.<minor>.<patch>[-rc<rc>|-beta<beta>|-alpha<alpha>|-dev]. Got {info_dict['custom_fw_version']}")
 
         return True
 

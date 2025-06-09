@@ -42,8 +42,8 @@ On `info.toml` values
 - `id` (mandatory integer): number to unambiguously and uniquely identify the airframe. This is realed to the parameter [`SYS_AUTOSTART`](https://docs.px4.io/main/en/advanced_config/parameter_reference.html#SYS_AUTOSTART), to avoid collision pick a number from `[22000, 22999]` as this range is reserved by PX4 specifically for this purpose.
 - `vendor` (mandatory string): The manufacturer of the board, e.g. `px4`, `nxp`, etc.
 - `model` (mandatory string): The board model: `sitl`, `fmu-v4`, `fmu-v5`, etc.
-- `px4_version` (mandatory string): PX4 version to be compiled in format `v<int>.<int>.<int>`. Do not forget to add the lowercase `v` letter prependix the semantic version.
-- `custom_fw_version` (optional string): Default `0.0.0`. This option allows you to enter your custom firmware version, but also allows you to compile specific PX4 versions such as `rc1`, `beta1`, `alpha`, in `[rc|beta|alpha]<int>` format.
+- `px4_version` (mandatory string): PX4 version to be compiled in format `v<major>.<minor>.<patch>[-rc<rc>|-beta<beta>|-alpha<alpha>|-dev]`. Do not forget to add the lowercase `v` letter prependix the semantic version.
+- `custom_fw_version` (optional string): Default `0.0.0`. This option allows you to enter your custom firmware version in the format `<major>.<minor>.<patch>[-rc<rc>|-beta<beta>|-alpha<alpha>|-dev]`
 - `components` (optional string or list of strings): Default `None`. Add startup scripts into the firmware that can be use later to initialize components.:
 
 ## Why?

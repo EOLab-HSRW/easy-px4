@@ -14,7 +14,7 @@ def test_load_info_good():
         custom_fw_version = "0.0.2"
     """)
 
-    info_test_file = Path(__file__).resolve().parent.parent / "demos" / "drones" / "protoflyer" / "info.toml"
+    info_test_file = Path(__file__).resolve().parent.parent / "demos/protoflyer/info.toml"
     easy_px4.load_info(info_test_file)
     easy_px4.load_info(str(info_test_file))
 
@@ -102,6 +102,51 @@ def test_load_info_px4_version():
     test for correct format of px4_version
     """
 
+    easy_px4.load_info("""
+        name = "drone"
+        id = 12345
+        vendor = "px4"
+        model = "fmu-v3"
+        px4_version = "v1.15.4"
+        custom_fw_version = "1.2.3"
+    """)
+
+    easy_px4.load_info("""
+        name = "drone"
+        id = 12345
+        vendor = "px4"
+        model = "fmu-v3"
+        px4_version = "v1.15.4-beta1"
+        custom_fw_version = "1.2.3"
+    """)
+
+    easy_px4.load_info("""
+        name = "drone"
+        id = 12345
+        vendor = "px4"
+        model = "fmu-v3"
+        px4_version = "v1.15.4-alpha3"
+        custom_fw_version = "1.2.3"
+    """)
+
+    easy_px4.load_info("""
+        name = "drone"
+        id = 12345
+        vendor = "px4"
+        model = "fmu-v3"
+        px4_version = "v1.15.4-rc22"
+        custom_fw_version = "1.2.3"
+    """)
+
+    easy_px4.load_info("""
+        name = "drone"
+        id = 12345
+        vendor = "px4"
+        model = "fmu-v3"
+        px4_version = "v1.15.4-dev"
+        custom_fw_version = "1.2.3"
+    """)
+
     with pytest.raises(ValueError):
         easy_px4.load_info("""
             name = "drone"
@@ -119,6 +164,48 @@ def test_load_info_px4_version():
             vendor = "px4"
             model = "fmu-v3"
             px4_version = "v1.15.4.0"
+            custom_fw_version = "0.0.2"
+        """)
+
+    # missing int
+    with pytest.raises(ValueError):
+        easy_px4.load_info("""
+            name = "drone"
+            id = 12345
+            vendor = "px4"
+            model = "fmu-v3"
+            px4_version = "v1.15.4-beta"
+            custom_fw_version = "0.0.2"
+        """)
+
+    with pytest.raises(ValueError):
+        easy_px4.load_info("""
+            name = "drone"
+            id = 12345
+            vendor = "px4"
+            model = "fmu-v3"
+            px4_version = "v1.15.4-rc"
+            custom_fw_version = "0.0.2"
+        """)
+
+    with pytest.raises(ValueError):
+        easy_px4.load_info("""
+            name = "drone"
+            id = 12345
+            vendor = "px4"
+            model = "fmu-v3"
+            px4_version = "v1.15.4-alpha"
+            custom_fw_version = "0.0.2"
+        """)
+
+    # dev with int
+    with pytest.raises(ValueError):
+        easy_px4.load_info("""
+            name = "drone"
+            id = 12345
+            vendor = "px4"
+            model = "fmu-v3"
+            px4_version = "v1.15.4-dev1"
             custom_fw_version = "0.0.2"
         """)
 
@@ -149,7 +236,7 @@ def test_load_info_custom_fw_version():
         vendor = "px4"
         model = "fmu-v3"
         px4_version = "v1.15.4"
-        custom_fw_version = "rc1"
+        custom_fw_version = "1.2.3"
     """)
 
     easy_px4.load_info("""
@@ -158,7 +245,7 @@ def test_load_info_custom_fw_version():
         vendor = "px4"
         model = "fmu-v3"
         px4_version = "v1.15.4"
-        custom_fw_version = "beta20"
+        custom_fw_version = "1.2.3-rc2"
     """)
 
     easy_px4.load_info("""
@@ -167,7 +254,25 @@ def test_load_info_custom_fw_version():
         vendor = "px4"
         model = "fmu-v3"
         px4_version = "v1.15.4"
-        custom_fw_version = "alpha12"
+        custom_fw_version = "1.2.3-alpha2"
+    """)
+
+    easy_px4.load_info("""
+        name = "drone"
+        id = 12345
+        vendor = "px4"
+        model = "fmu-v3"
+        px4_version = "v1.15.4"
+        custom_fw_version = "1.2.3-beta2"
+    """)
+
+    easy_px4.load_info("""
+        name = "drone"
+        id = 12345
+        vendor = "px4"
+        model = "fmu-v3"
+        px4_version = "v1.15.4"
+        custom_fw_version = "1.2.3-dev"
     """)
 
     with pytest.raises(ValueError):
