@@ -165,6 +165,7 @@ class BuildCommand(Command):
         }[args.type]
 
         if args.msgs_output:
+            self.logger.info("Copying msg/ and srv/ from firmware.")
             self.logger.debug(f"Checking for msg/ and srv/ in {args.msgs_output}")
             msg_src = PX4_DIR / "msg"
             msg_versioned_src = PX4_DIR / "msg/versioned"
