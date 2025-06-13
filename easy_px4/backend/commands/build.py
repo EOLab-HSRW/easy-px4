@@ -200,7 +200,11 @@ class BuildCommand(Command):
         self.__setup_git(info)
 
         self.logger.info("Installing PX4 tooling...")
-        run_command(tooling_cmd, cwd=PX4_DIR)
+        tooling = run_command(tooling_cmd, cwd=PX4_DIR)
+
+        if tooling["returncode"] != 0:
+            self.logger.error(f"Failed to install dependencies. {tooling['stderr']}, {tooling['stdout']}")
+
 
         shutil.copy2(args.path / directory.modules_file, px4board)
 
