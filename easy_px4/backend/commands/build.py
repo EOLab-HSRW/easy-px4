@@ -106,15 +106,15 @@ class BuildCommand(Command):
 
     def __setup_git(self, info) -> None:
 
-        self.logger.debug(f"Fetching tags")
-        fetch_res = run_command(['git', 'fetch', '--tags', '--force'], cwd=PX4_DIR)
-        if fetch_res['returncode'] != 0:
-            self.logger.error(f"Failed to fetch tags: {fetch_res['stderr']}, {fetch_res['stdout']}")
+        self.logger.debug(f"Fetching PX4 tag")
+        fetch_res = run_command(['git', 'fetch', 'origin', 'tag', info.px4_version], cwd=PX4_DIR)
+        if fetch_res.returncode != 0:
+            self.logger.error(f"Failed to fetch tag {info.px4_version}: {fetch_res.stderr}, {fetch_res.stdout}")
             sys.exit(1)
 
         restore_res = run_command(['git', 'restore', '.'], cwd=PX4_DIR)
-        if restore_res['returncode'] != 0:
-            self.logger.error(f"Failed to restore repo tags: {restore_res['stderr']}")
+        if restore_res.returncode != 0:
+            self.logger.error(f"Failed to restore repo: {restore_res.stderr}")
             sys.exit(1)
 
         self.logger.debug(f"Starting tag composition")
@@ -124,19 +124,19 @@ class BuildCommand(Command):
 
         self.logger.info(f"Checking out to version {self.original_tag}")
         git_checkout = run_command(['git', 'checkout', self.original_tag], cwd=PX4_DIR)
-        if git_checkout['returncode'] != 0:
-            self.logger.error(f"Failed to checkout to {self.original_tag}. Make sure is a valid px4 version. {git_checkout['stderr']}")
+        if git_checkout.returncode != 0:
+            self.logger.error(f"Failed to checkout to {self.original_tag}. Make sure is a valid px4 version. {git_checkout.stderr}")
             sys.exit(1)
 
         self.logger.info("Syncronizing submodules")
+        self.logger.debug(f"Renaming tags from {self.original_tag} to {self.target_tag}")
+        self.commit_hash = run_command(['git', 'rev-list', '-n', '1', self.original_tag], cwd=PX4_DIR).stdout
+        run_command(['git', 'tag', '-d', self.original_tag], cwd=PX4_DIR, check=True)
+        run_command(['git', 'tag', self.target_tag, self.commit_hash], cwd=PX4_DIR, check=True)
         run_command(["git", "submodule", "deinit", "-f", "--all"], cwd=PX4_DIR)
         run_command(["git", "submodule", "sync", "--recursive"], cwd=PX4_DIR)
         run_command(["git", "submodule", "update", "--init", "--recursive"], cwd=PX4_DIR)
 
-        self.logger.debug(f"Renaming tags from {self.original_tag} to {self.target_tag}")
-        self.commit_hash = run_command(['git', 'rev-list', '-n', '1', self.original_tag], cwd=PX4_DIR)["stdout"]
-        run_command(['git', 'tag', '-d', self.original_tag], cwd=PX4_DIR, check=True)
-        run_command(['git', 'tag', self.target_tag, self.commit_hash], cwd=PX4_DIR, check=True)
 
 
     def execute(self, args: Namespace) -> None:
@@ -200,10 +200,10 @@ class BuildCommand(Command):
         self.__setup_git(info)
 
         self.logger.info("Installing PX4 tooling...")
-        tooling = run_command(tooling_cmd, cwd=PX4_DIR)
+        tooling = run_command(tooling_cmd, live=True, logger=self.logger, cwd=PX4_DIR)
 
-        if tooling["returncode"] != 0:
-            self.logger.error(f"Failed to install dependencies. {tooling['stderr']}, {tooling['stdout']}")
+        if tooling.returncode != 0:
+            self.logger.error(f"Failed to install dependencies. {tooling.stderr}, {tooling.stdout}")
 
 
         shutil.copy2(args.path / directory.modules_file, px4board)
@@ -238,17 +238,10 @@ class BuildCommand(Command):
             self.logger.info(f"Make clean build")
             run_command(["make", "clean"], cwd=PX4_DIR)
 
-        build_px4 = run_command(
-            ["make", target],
-            cwd=PX4_DIR,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            text=True,
-            capture_output=False
-        )
+        build_px4 = run_command(["make", target], live=True, logger=self.logger, cwd=PX4_DIR)
 
-        if build_px4['returncode'] != 0:
-            self.logger.error(f"Build failed for {target}. {build_px4.get('stderr', '')} {build_px4.get('stdout', '')}")
+        if build_px4.returncode != 0:
+            self.logger.error(f"Build failed for {target}. {build_px4.stderr} {build_px4.stdout}")
             sys.exit(1)
 
         if args.output and args.type == "firmware":
@@ -258,30 +251,9 @@ class BuildCommand(Command):
 
         self.logger.info("Done.")
 
-        # cleaning steps
-
-        # target_px4board.unlink() # remove file
 
     def cleanup(self):
         self.logger.debug(f"Restoring tag to {self.original_tag}.")
         run_command(['git', 'tag', '-d', self.target_tag], cwd=PX4_DIR, check=True)
         run_command(['git', 'tag', self.original_tag, self.commit_hash], cwd=PX4_DIR, check=True)
-        # run_command(['git', 'restore', '.'], cwd=PX4_DIR, check=True)
-
-
-        """
-        force cleaning:
-
-        # 1. Move the build/ folder out of the repo temporarily
-mv build ../build-temp
-
-# 2. Remove all untracked files and folders (force + directories)
-git clean -fdx
-
-# 3. Reset tracked files to exactly match HEAD
-git reset --hard HEAD
-
-# 4. Move the build/ folder back
-mv ../build-temp build
-
-        """
+        run_command(['git', 'restore', '.'], cwd=PX4_DIR, check=True)

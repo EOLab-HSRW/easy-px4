@@ -24,11 +24,11 @@ def common_install() -> None:
     if not PX4_DIR.exists():
         try:
             px4_clone = subprocess.run(
-                ["git", "clone", "https://github.com/PX4/PX4-Autopilot", "--recursive"],
+                ["git", "clone", "https://github.com/PX4/PX4-Autopilot", "--recursive", "--no-tags"],
                 cwd=WORK_DIR,
                 check=True,
                 stdout=sys.stdout,
-                stderr=sys.stderr,
+                stderr=sys.stderr, 
                 text=True
             )
         except subprocess.CalledProcessError as e:
