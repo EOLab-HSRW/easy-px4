@@ -236,7 +236,7 @@ class BuildCommand(Command):
 
         if args.clean_run:
             self.logger.info(f"Make clean build")
-            run_command(["make", "clean"], cwd=PX4_DIR)
+            run_command(["make", "clean"], live=True, logger=self.logger, cwd=PX4_DIR)
 
         build_px4 = run_command(["make", target], live=True, logger=self.logger, cwd=PX4_DIR)
 
