@@ -269,7 +269,7 @@ class BuildCommand(Command):
             sys.exit(1)
 
         if args.output and args.type == "firmware":
-            output_file = args.output / f"{info.name}_{info.custom_fw_version}.px4"
+            output_file = args.output / f"{info.name}.px4"
             shutil.copy2(PX4_DIR / "build" / target / f"{target}.px4", output_file)
             self.logger.info(f"firmware file in: {output_file}")
 
