@@ -129,14 +129,14 @@ class BuildCommand(Command):
             sys.exit(1)
 
         self.logger.info("Syncronizing submodules")
-        self.logger.debug(f"Renaming tags from {self.original_tag} to {self.target_tag}")
-        self.commit_hash = run_command(['git', 'rev-list', '-n', '1', self.original_tag], cwd=PX4_DIR).stdout
-        run_command(['git', 'tag', '-d', self.original_tag], cwd=PX4_DIR, check=True)
-        run_command(['git', 'tag', self.target_tag, self.commit_hash], cwd=PX4_DIR, check=True)
         run_command(["git", "submodule", "deinit", "-f", "--all"], cwd=PX4_DIR)
         run_command(["git", "submodule", "sync", "--recursive"], cwd=PX4_DIR)
         run_command(["git", "submodule", "update", "--init", "--recursive"], cwd=PX4_DIR)
 
+        self.logger.debug(f"Renaming tags from {self.original_tag} to {self.target_tag}")
+        self.commit_hash = run_command(['git', 'rev-list', '-n', '1', self.original_tag], cwd=PX4_DIR).stdout
+        run_command(['git', 'tag', '-d', self.original_tag], cwd=PX4_DIR, check=True)
+        run_command(['git', 'tag', self.target_tag, self.commit_hash], cwd=PX4_DIR, check=True)
 
 
     def execute(self, args: Namespace) -> None:
