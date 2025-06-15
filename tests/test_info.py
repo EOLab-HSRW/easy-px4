@@ -58,7 +58,7 @@ def test_load_info_bad():
         # incorrect formating name
         easy_px4.load_info("""
             name = drone
-            id = '12345'
+            id = "12345"
             vendor = "px4"
             model = "fmu-v3"
             px4_version = "v1.15.4"
