@@ -20,6 +20,16 @@ def test_load_info_good():
         custom_fw_version = "0.0.2"
     """)
 
+    info = easy_px4.load_info("""
+        name = "drone"
+        id = 12345
+        vendor = "px4"
+        model = "fmu-v3"
+        px4_version = "v1.15.4"
+        px4_commit = "main"
+        custom_fw_version = "0.0.2"
+    """)
+
     info_test_file = Path(__file__).resolve().parent.parent / "demos/protoflyer/info.toml"
     easy_px4.load_info(info_test_file)
     easy_px4.load_info(str(info_test_file))
@@ -104,6 +114,7 @@ def test_load_info_bad():
             custom_fw_version = "0.0.2"
             extra = "stuff"
         """)
+
 
 valid_px4_versions = [
     "v1.15.4",

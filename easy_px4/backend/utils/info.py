@@ -22,6 +22,7 @@ class Info:
     vendor: str
     model: str
     px4_version: str
+    px4_commit: Optional[str] = None
 
     custom_fw_version: Optional[str] = "0.0.0"
     components: Optional[Union[str, list[str]]] = None

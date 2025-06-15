@@ -30,9 +30,9 @@ class BuildCommand(Command):
 
     def __init__(self) -> None:
         super().__init__()
-        self.target_tag = None
-        self.original_tag = None
+        self.target_commit = None
         self.commit_hash = None
+        self.renamed_tag = None
 
     def add_arguments(self, parser: ArgumentParser) -> None:
 
@@ -106,19 +106,44 @@ class BuildCommand(Command):
 
     def __setup_git(self, info) -> None:
 
-        self.logger.debug(f"Fetching PX4 tag")
-        fetch_res = run_command(['git', 'fetch', 'origin', 'tag', info.px4_version], cwd=PX4_DIR)
-        if fetch_res.returncode != 0:
-            self.logger.error(f"Failed to fetch tag {info.px4_version}: {fetch_res.stderr}, {fetch_res.stdout}")
-            sys.exit(1)
-
         restore_res = run_command(['git', 'restore', '.'], cwd=PX4_DIR)
         if restore_res.returncode != 0:
             self.logger.error(f"Failed to restore repo: {restore_res.stderr}")
             sys.exit(1)
 
-        self.logger.debug(f"Starting tag composition")
-        self.original_tag = info.px4_version
+        if info.px4_commit:
+            self.logger.info("Found 'px4_commit'. Note that 'px4_commit' takes precedence over 'px4_version'. In this case 'px4_version' is used solely for annotation purposes and does not represent a tagged version of PX4.")
+
+            self.target_commit = info.px4_commit
+        else:
+            self.logger.debug(f"Fetching PX4 tag: {info.px4_version}")
+            fetch_res = run_command(['git', 'fetch', 'origin', 'tag', info.px4_version], cwd=PX4_DIR)
+            if fetch_res.returncode != 0:
+                self.logger.error(f"Failed to fetch tag {info.px4_version}: {fetch_res.stderr}, {fetch_res.stdout}")
+                sys.exit(1)
+
+            self.target_commit = info.px4_version
+
+        self.logger.info(f"Checking out to: {self.target_commit}")
+        git_checkout = run_command(['git', 'checkout', self.target_commit], cwd=PX4_DIR)
+        if git_checkout.returncode != 0:
+            self.logger.error(f"Failed to checkout to {self.target_commit}. Make sure is a valid px4 tag or commit. {git_checkout.stderr}")
+            sys.exit(1)
+
+        self.logger.info("Syncronizing submodules")
+        run_command(["git", "submodule", "deinit", "-f", "--all"], cwd=PX4_DIR)
+        run_command(["git", "submodule", "sync", "--recursive"], cwd=PX4_DIR)
+        run_command(["git", "submodule", "update", "--init", "--recursive"], cwd=PX4_DIR)
+
+        # self.commit_hash = run_command(['git', 'rev-list', '-n', '1', self.target_commit], cwd=PX4_DIR).stdout
+        # self.logger.debug(f"Saving commit_hash: {self.commit_hash}")
+
+        if not info.px4_commit:
+            self.logger.debug(f"px4_commit not provided. We are in a tagged commit.")
+            self.logger.debug(f"Removing original px4 tag: {info.px4_version}")
+            run_command(['git', 'tag', '-d', info.px4_version], cwd=PX4_DIR, check=True)
+
+        self.logger.debug(f"Re-tagging to add custom version")
 
         # =====================================================================================
         # Hacky way (for now) to make the tags work without changing the PX4 source code
@@ -128,29 +153,14 @@ class BuildCommand(Command):
         if len(px4_split) > 1:
             px4_version = px4_split[0]
             px4_release = px4_split[1]
-            self.target_tag = f"{px4_version}-{info.custom_fw_version.split('-')[0]}-{px4_release}"
+            self.renamed_tag = f"{px4_version}-{info.custom_fw_version.split('-')[0]}-{px4_release}"
         else:
-            self.target_tag = f"{px4_split[0]}-{info.custom_fw_version.split('-')[0]}"
+            self.renamed_tag = f"{px4_split[0]}-{info.custom_fw_version.split('-')[0]}"
         # =====================================================================================
 
-        self.logger.debug(f"{self.original_tag} -> {self.target_tag}")
+        self.logger.debug(f"Re-tagging: {info.px4_version} -> {self.renamed_tag}")
 
-        self.logger.info(f"Checking out to version {self.original_tag}")
-        git_checkout = run_command(['git', 'checkout', self.original_tag], cwd=PX4_DIR)
-        if git_checkout.returncode != 0:
-            self.logger.error(f"Failed to checkout to {self.original_tag}. Make sure is a valid px4 version. {git_checkout.stderr}")
-            sys.exit(1)
-
-        self.logger.info("Syncronizing submodules")
-        run_command(["git", "submodule", "deinit", "-f", "--all"], cwd=PX4_DIR)
-        run_command(["git", "submodule", "sync", "--recursive"], cwd=PX4_DIR)
-        run_command(["git", "submodule", "update", "--init", "--recursive"], cwd=PX4_DIR)
-
-        self.logger.debug(f"Renaming tags from {self.original_tag} to {self.target_tag}")
-        self.commit_hash = run_command(['git', 'rev-list', '-n', '1', self.original_tag], cwd=PX4_DIR).stdout
-        run_command(['git', 'tag', '-d', self.original_tag], cwd=PX4_DIR, check=True)
-        # run_command(['git', 'tag', self.target_tag, self.commit_hash], cwd=PX4_DIR, check=True)
-        run_command(['git', 'tag', self.target_tag], cwd=PX4_DIR, check=True)
+        run_command(['git', 'tag', self.renamed_tag], cwd=PX4_DIR, check=True)
 
 
     def execute(self, args: Namespace) -> None:
@@ -267,7 +277,8 @@ class BuildCommand(Command):
 
 
     def cleanup(self):
-        self.logger.debug(f"Restoring tag to {self.original_tag}.")
-        run_command(['git', 'tag', '-d', self.target_tag], cwd=PX4_DIR, check=True)
-        run_command(['git', 'tag', self.original_tag, self.commit_hash], cwd=PX4_DIR, check=True)
+        self.logger.debug(f"Restoring tags.")
+        self.logger.debug(f"Deleting {self.renamed_tag}")
+        run_command(['git', 'tag', '-d', self.renamed_tag], cwd=PX4_DIR, check=True)
+
         run_command(['git', 'restore', '.'], cwd=PX4_DIR, check=True)
