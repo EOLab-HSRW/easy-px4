@@ -1,5 +1,5 @@
 import subprocess
-from typing import Union, List, Optional
+from typing import Union, Optional
 from dataclasses import dataclass, field
 
 @dataclass
@@ -11,7 +11,7 @@ class CommandResult:
     obj: Optional[object] = field(default=None)  # Store process object
 
 def run_command(
-    cmd: Union[str, List[str]],
+    cmd: Union[str, list[str]],
     live: bool = False,
     logger: Optional[object] = None,
     **kwargs
