@@ -123,8 +123,14 @@ class BuildCommand(Command):
         # =====================================================================================
         # Hacky way (for now) to make the tags work without changing the PX4 source code
         # or maybe I should start a conversation with PX4 to see what can we do ?
-        px4_version, px4_release = info.px4_version.split("-")
-        self.target_tag = f"{px4_version}-{info.custom_fw_version.split('-')[0]}-{px4_release}"
+        px4_split = info.px4_version.split("-")
+
+        if len(px4_split) > 1:
+            px4_version = px4_split[0]
+            px4_release = px4_split[1]
+            self.target_tag = f"{px4_version}-{info.custom_fw_version.split('-')[0]}-{px4_release}"
+        else:
+            self.target_tag = f"{px4_split[0]}-{info.custom_fw_version.split('-')[0]}"
         # =====================================================================================
 
         self.logger.debug(f"{self.original_tag} -> {self.target_tag}")
