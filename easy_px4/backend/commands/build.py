@@ -119,7 +119,14 @@ class BuildCommand(Command):
 
         self.logger.debug(f"Starting tag composition")
         self.original_tag = info.px4_version
-        self.target_tag = f"{info.px4_version}-{info.custom_fw_version}"
+
+        # =====================================================================================
+        # Hacky way (for now) to make the tags work without changing the PX4 source code
+        # or maybe I should start a conversation with PX4 to see what can we do ?
+        px4_version, px4_release = info.px4_version.split("-")
+        self.target_tag = f"{px4_version}-{info.custom_fw_version.split('-')[0]}-{px4_release}"
+        # =====================================================================================
+
         self.logger.debug(f"{self.original_tag} -> {self.target_tag}")
 
         self.logger.info(f"Checking out to version {self.original_tag}")
@@ -136,7 +143,8 @@ class BuildCommand(Command):
         self.logger.debug(f"Renaming tags from {self.original_tag} to {self.target_tag}")
         self.commit_hash = run_command(['git', 'rev-list', '-n', '1', self.original_tag], cwd=PX4_DIR).stdout
         run_command(['git', 'tag', '-d', self.original_tag], cwd=PX4_DIR, check=True)
-        run_command(['git', 'tag', self.target_tag, self.commit_hash], cwd=PX4_DIR, check=True)
+        # run_command(['git', 'tag', self.target_tag, self.commit_hash], cwd=PX4_DIR, check=True)
+        run_command(['git', 'tag', self.target_tag], cwd=PX4_DIR, check=True)
 
 
     def execute(self, args: Namespace) -> None:
