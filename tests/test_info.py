@@ -1,5 +1,11 @@
+import sys
 from pathlib import Path
-import tomli
+
+if sys.version_info >= (3, 11):
+    import tomllib
+else:
+    import tomli as tomllib
+
 import pytest
 import easy_px4
 
@@ -54,7 +60,7 @@ def test_load_info_list_components():
 
 def test_load_info_bad():
 
-    with pytest.raises(tomli._parser.TOMLDecodeError):
+    with pytest.raises(tomllib.TOMLDecodeError):
         # incorrect formating name
         easy_px4.load_info("""
             name = drone
@@ -76,7 +82,7 @@ def test_load_info_bad():
             custom_fw_version = "0.0.2"
         """)
 
-    with pytest.raises(tomli._parser.TOMLDecodeError):
+    with pytest.raises(tomllib.TOMLDecodeError):
         # incorrect formating vendor
         easy_px4.load_info("""
             name = drone
