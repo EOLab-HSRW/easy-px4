@@ -29,7 +29,8 @@ def test_load_info_missing_key():
             custom_fw_version = "0.0.2"
         """)
 
-def test_load_info_components():
+
+def test_load_info_single_component():
     info = easy_px4.load_info("""
         name = "drone"
         id = 12345
@@ -40,6 +41,7 @@ def test_load_info_components():
         components = "some_component"
     """)
 
+def test_load_info_list_components():
     info = easy_px4.load_info("""
         name = "drone"
         id = 12345
@@ -97,200 +99,81 @@ def test_load_info_bad():
             extra = "stuff"
         """)
 
-def test_load_info_px4_version():
-    """
-    test for correct format of px4_version
-    """
+valid_px4_versions = [
+    "v1.15.4",
+    "v1.15.4-beta1",
+    "v1.15.4-alpha3",
+    "v1.15.4-rc22",
+    "v1.15.4-dev",
+]
 
-    easy_px4.load_info("""
+@pytest.mark.parametrize("version", valid_px4_versions)
+def test_valid_px4_versions(version):
+    easy_px4.load_info(f"""
+        name = "drone"
+        id = 12345
+        vendor = "px4"
+        model = "fmu-v3"
+        px4_version = "{version}"
+        custom_fw_version = "1.2.3"
+    """)
+
+invalid_px4_versions = [
+    "v1.15.4.0",
+    "v1.15.4-beta",
+    "v1.15.4-rc",
+    "v1.15.4-alpha",
+    "v1.15.4-dev1",
+    "1.14",
+    "latest",
+    "1.15.4",
+]
+
+@pytest.mark.parametrize("version", invalid_px4_versions)
+def test_invalid_px4_versions(version):
+    with pytest.raises(ValueError):
+        easy_px4.load_info(f"""
+            name = "drone"
+            id = 12345
+            vendor = "px4"
+            model = "fmu-v3"
+            px4_version = "{version}"
+            custom_fw_version = "0.0.2"
+        """)
+
+valid_custom_fw_versions = [
+    "1.2.3",
+    "1.2.3-rc2",
+    "1.2.3-alpha2",
+    "1.2.3-beta2",
+    "1.2.3-dev",
+]
+
+@pytest.mark.parametrize("version", valid_custom_fw_versions)
+def test_valid_custom_fw_versions(version):
+    easy_px4.load_info(f"""
         name = "drone"
         id = 12345
         vendor = "px4"
         model = "fmu-v3"
         px4_version = "v1.15.4"
-        custom_fw_version = "1.2.3"
+        custom_fw_version = "{version}"
     """)
 
-    easy_px4.load_info("""
-        name = "drone"
-        id = 12345
-        vendor = "px4"
-        model = "fmu-v3"
-        px4_version = "v1.15.4-beta1"
-        custom_fw_version = "1.2.3"
-    """)
 
-    easy_px4.load_info("""
-        name = "drone"
-        id = 12345
-        vendor = "px4"
-        model = "fmu-v3"
-        px4_version = "v1.15.4-alpha3"
-        custom_fw_version = "1.2.3"
-    """)
+invalid_custom_fw_versions = [
+    "0.2.0.0",
+    "0.2",
+]
 
-    easy_px4.load_info("""
-        name = "drone"
-        id = 12345
-        vendor = "px4"
-        model = "fmu-v3"
-        px4_version = "v1.15.4-rc22"
-        custom_fw_version = "1.2.3"
-    """)
-
-    easy_px4.load_info("""
-        name = "drone"
-        id = 12345
-        vendor = "px4"
-        model = "fmu-v3"
-        px4_version = "v1.15.4-dev"
-        custom_fw_version = "1.2.3"
-    """)
-
+@pytest.mark.parametrize("version", invalid_custom_fw_versions)
+def test_invalid_custom_fw_versions(version):
     with pytest.raises(ValueError):
-        easy_px4.load_info("""
-            name = "drone"
-            id = 12345
-            vendor = "px4"
-            model = "fmu-v3"
-            px4_version = "1.15.4"
-            custom_fw_version = "0.0.2"
-        """)
-
-    with pytest.raises(ValueError):
-        easy_px4.load_info("""
-            name = "drone"
-            id = 12345
-            vendor = "px4"
-            model = "fmu-v3"
-            px4_version = "v1.15.4.0"
-            custom_fw_version = "0.0.2"
-        """)
-
-    # missing int
-    with pytest.raises(ValueError):
-        easy_px4.load_info("""
-            name = "drone"
-            id = 12345
-            vendor = "px4"
-            model = "fmu-v3"
-            px4_version = "v1.15.4-beta"
-            custom_fw_version = "0.0.2"
-        """)
-
-    with pytest.raises(ValueError):
-        easy_px4.load_info("""
-            name = "drone"
-            id = 12345
-            vendor = "px4"
-            model = "fmu-v3"
-            px4_version = "v1.15.4-rc"
-            custom_fw_version = "0.0.2"
-        """)
-
-    with pytest.raises(ValueError):
-        easy_px4.load_info("""
-            name = "drone"
-            id = 12345
-            vendor = "px4"
-            model = "fmu-v3"
-            px4_version = "v1.15.4-alpha"
-            custom_fw_version = "0.0.2"
-        """)
-
-    # dev with int
-    with pytest.raises(ValueError):
-        easy_px4.load_info("""
-            name = "drone"
-            id = 12345
-            vendor = "px4"
-            model = "fmu-v3"
-            px4_version = "v1.15.4-dev1"
-            custom_fw_version = "0.0.2"
-        """)
-
-    with pytest.raises(ValueError):
-        easy_px4.load_info("""
-            name = "drone"
-            id = 12345
-            vendor = "px4"
-            model = "fmu-v3"
-            px4_version = "1.14"
-            custom_fw_version = "0.0.2"
-        """)
-
-    with pytest.raises(ValueError):
-        easy_px4.load_info("""
-            name = "drone"
-            id = 12345
-            vendor = "px4"
-            model = "fmu-v3"
-            px4_version = "latest"
-            custom_fw_version = "0.0.2"
-        """)
-
-def test_load_info_custom_fw_version():
-    easy_px4.load_info("""
-        name = "drone"
-        id = 12345
-        vendor = "px4"
-        model = "fmu-v3"
-        px4_version = "v1.15.4"
-        custom_fw_version = "1.2.3"
-    """)
-
-    easy_px4.load_info("""
-        name = "drone"
-        id = 12345
-        vendor = "px4"
-        model = "fmu-v3"
-        px4_version = "v1.15.4"
-        custom_fw_version = "1.2.3-rc2"
-    """)
-
-    easy_px4.load_info("""
-        name = "drone"
-        id = 12345
-        vendor = "px4"
-        model = "fmu-v3"
-        px4_version = "v1.15.4"
-        custom_fw_version = "1.2.3-alpha2"
-    """)
-
-    easy_px4.load_info("""
-        name = "drone"
-        id = 12345
-        vendor = "px4"
-        model = "fmu-v3"
-        px4_version = "v1.15.4"
-        custom_fw_version = "1.2.3-beta2"
-    """)
-
-    easy_px4.load_info("""
-        name = "drone"
-        id = 12345
-        vendor = "px4"
-        model = "fmu-v3"
-        px4_version = "v1.15.4"
-        custom_fw_version = "1.2.3-dev"
-    """)
-
-    with pytest.raises(ValueError):
-        easy_px4.load_info("""
+        easy_px4.load_info(f"""
             name = "drone"
             id = 12345
             vendor = "px4"
             model = "fmu-v3"
             px4_version = "v1.15.4"
-            custom_fw_version = "0.2.0.0"
-        """)
-
-    with pytest.raises(ValueError):
-        easy_px4.load_info("""
-            name = "drone"
-            id = 12345
-            vendor = "px4"
-            model = "fmu-v3"
-            px4_version = "v1.15.4"
-            custom_fw_version = "0.2"
+            custom_fw_version = "{version}"
         """)
