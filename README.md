@@ -1,5 +1,8 @@
 # Easy PX4
 
+[![Pytest Matrix](https://github.com/EOLab-HSRW/easy-px4/actions/workflows/test.yml/badge.svg)](https://github.com/EOLab-HSRW/easy-px4/actions/workflows/test.yml)
+
+
 A simple tool to help to build custom firmware.
 
 ## Install
