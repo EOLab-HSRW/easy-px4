@@ -1,7 +1,7 @@
 # Easy PX4
 
 [![Pytest Matrix](https://github.com/EOLab-HSRW/easy-px4/actions/workflows/test.yml/badge.svg)](https://github.com/EOLab-HSRW/easy-px4/actions/workflows/test.yml)
-
+[![Deploy Multi-Arch Docker Image](https://github.com/EOLab-HSRW/easy-px4/actions/workflows/deploy-container.yml/badge.svg)](https://github.com/EOLab-HSRW/easy-px4/actions/workflows/deploy-container.yml)
 
 A simple tool to help to build custom firmware.
 
@@ -68,3 +68,5 @@ This tool simply automates the setup of your files and still depends on PX4 buil
 
 TODO:
 - [ ] Add support to `dds_topics.yaml` customization.
+- [ ] Add support to easily start sitl
+- [ ] Add support to clean build cache
