@@ -28,4 +28,4 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ghcr.io/${{ github.repository }}:ubuntu-22.04
+          tags: ghcr.io/eolab-hsrw/easy-px4:ubuntu-22.04
