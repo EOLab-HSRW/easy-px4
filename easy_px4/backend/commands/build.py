@@ -108,7 +108,7 @@ class BuildCommand(Command):
 
         restore_res = run_command(['git', 'restore', '.'], cwd=PX4_DIR)
         if restore_res.returncode != 0:
-            self.logger.error(f"Failed to restore repo: {restore_res.stderr}")
+            self.logger.error(f"Failed to restore repo: {restore_res.stderr}. {restore_res.stdout}")
             sys.exit(1)
 
         if info.px4_commit:
