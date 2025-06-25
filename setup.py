@@ -1,3 +1,4 @@
+import os
 import sys
 import subprocess
 from setuptools import setup, find_packages
@@ -15,8 +16,8 @@ with (Path(__file__).resolve().parent / "README.md").open(encoding='utf-8') as f
     long_description = f.read()
 
 def common_install() -> None:
-
-    WORK_DIR = Path().home() / f".{__package__}"
+    env_work_dir = os.environ.get("EASY_PX4_WORK_DIR", str(Path.home()))
+    WORK_DIR = Path(env_work_dir) / f".{__package__}"
     WORK_DIR.mkdir(exist_ok=True)
 
     PX4_DIR = WORK_DIR / "PX4-Autopilot"

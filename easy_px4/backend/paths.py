@@ -1,10 +1,7 @@
+import os
 from pathlib import Path
 
-def get_own_root_package():
-    import __main__
-    package = __package__ or getattr(__main__, '__package__', None)
-    return package.split('.')[0] if package else None
-
-WORK_DIR = Path().home() / f".{get_own_root_package()}"
+env_work_dir = os.environ.get("EASY_PX4_WORK_DIR", str(Path.home()))
+WORK_DIR = Path(env_work_dir) / ".easy_px4"
 
 PX4_DIR = WORK_DIR / "PX4-Autopilot"
