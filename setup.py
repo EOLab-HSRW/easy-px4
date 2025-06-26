@@ -42,7 +42,7 @@ def common_install() -> None:
                 text=True
             )
         except subprocess.CalledProcessError as e:
-            print("Failed to clone repository.")
+            print("Failed to setup PX4-Autopilot repository.")
             print("stdout:", e.stdout)
             print("stderr:", e.stderr)
 
