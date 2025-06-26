@@ -64,6 +64,10 @@ class BuildCommand(Command):
                             action="store_true",
                             help="Clean build artifacts before build.")
 
+        parser.add_argument("--skip-dependencies",
+                            action="store_true",
+                            help="Skip running official PX4 Tools/setup/ubuntu.sh script.")
+
         parser.add_argument("--overwrite",
                             action="store_true",
                             help="Overwrite existing build if present.")
@@ -226,11 +230,13 @@ class BuildCommand(Command):
 
         self.__setup_git(info)
 
-        self.logger.info("Installing PX4 tooling...")
-        tooling = run_command(tooling_cmd, live=True, logger=self.logger, cwd=PX4_DIR)
+        if not args.skip_dependencies:
+            self.logger.info("Installing PX4 tooling...")
+            tooling = run_command(tooling_cmd, live=True, logger=self.logger, cwd=PX4_DIR)
 
-        if tooling.returncode != 0:
-            self.logger.error(f"Failed to install dependencies. {tooling.stderr}, {tooling.stdout}")
+            if tooling.returncode != 0:
+                self.logger.error(f"Failed to install dependencies. {tooling.stderr}, {tooling.stdout}")
+                sys.exit(1)
 
 
         shutil.copy2(args.path / directory.modules_file, px4board)
