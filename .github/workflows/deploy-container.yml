@@ -33,7 +33,7 @@ jobs:
           cache-to: type=gha,mode=max
 
   build-arm64:
-    runs-on: ubuntu-22.04-arm64
+    runs-on: ubuntu-22.04-arm
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
