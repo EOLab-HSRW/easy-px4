@@ -34,7 +34,7 @@ jobs:
 
       - name: Extract architecture for tagging
         id: extract
-        run: echo "ARCH=${{ matrix.platform }}" | cut -d'/' -f2 >> $GITHUB_ENV
+        run: echo "ARCH=$(echo '${{ matrix.platform }}' | cut -d'/' -f2)" >> $GITHUB_ENV
 
       - name: Build and push ${{ env.ARCH }} image
         uses: docker/build-push-action@v6
