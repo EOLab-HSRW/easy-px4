@@ -7,6 +7,9 @@ on:
     branches: [main]
   workflow_dispatch:
 
+env:
+  EASY_PX4_INSTALL_DEPS: "false"
+
 jobs:
   test:
     runs-on: ubuntu-latest
