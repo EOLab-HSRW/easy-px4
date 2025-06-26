@@ -65,7 +65,7 @@ class BuildCommand(Command):
                             help="Clean build artifacts before build.")
 
         parser.add_argument("--install-dependencies",
-                            action="store_false",
+                            action="store_true",
                             help="Running official PX4 Tools/setup/ubuntu.sh script.")
 
         parser.add_argument("--overwrite",
