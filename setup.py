@@ -22,6 +22,8 @@ def common_install() -> None:
 
     PX4_DIR = WORK_DIR / "PX4-Autopilot"
 
+    install_deps = os.environ.get("EASY_PX4_INSTALL_DEPS", "true")
+
     if not PX4_DIR.exists():
         try:
             px4_clone = subprocess.run(
@@ -33,19 +35,20 @@ def common_install() -> None:
                 text=True
             )
 
-            install_dependencies = subprocess.run(
-                ["./Tools/setup/ubuntu.sh"],
-                cwd=PX4_DIR,
-                check=True,
-                stdout=sys.stdout,
-                stderr=sys.stderr, 
-                text=True
-            )
+            if install_deps == "true":
+                install_dependencies = subprocess.run(
+                    ["./Tools/setup/ubuntu.sh"],
+                    cwd=PX4_DIR,
+                    check=True,
+                    stdout=sys.stdout,
+                    stderr=sys.stderr, 
+                    text=True
+                )
 
-            if install_dependencies.returncode != 0:
-                print(install_dependencies.stdout)
-                print(install_dependencies.stderr)
-                sys.exit(1)
+                if install_dependencies.returncode != 0:
+                    print(install_dependencies.stdout)
+                    print(install_dependencies.stderr)
+                    sys.exit(1)
         except subprocess.CalledProcessError as e:
             print("Failed to setup PX4-Autopilot repository.")
             print("stdout:", e.stdout)
