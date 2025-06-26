@@ -16,7 +16,7 @@ RUN useradd -ms /bin/bash easy && \
 
 USER easy
 ENV HOME=/home/easy
-ENV EASY_PX4_WORK_DIR=/home/easy/.easy_px4
+ENV EASY_PX4_WORK_DIR=/home/easy/
 WORKDIR /home/easy
 
 COPY . /easy-px4
