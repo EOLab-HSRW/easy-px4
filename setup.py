@@ -17,23 +17,30 @@ with (Path(__file__).resolve().parent / "README.md").open(encoding='utf-8') as f
 
 def common_install() -> None:
     env_work_dir = os.environ.get("EASY_PX4_WORK_DIR", str(Path.home()))
+    install_deps = os.environ.get("EASY_PX4_INSTALL_DEPS", "true")
+    clone_px4 = os.environ.get("EASY_PX4_CLONE_PX4", "true")
+
     WORK_DIR = Path(env_work_dir) / f".{__package__}"
     WORK_DIR.mkdir(exist_ok=True)
 
     PX4_DIR = WORK_DIR / "PX4-Autopilot"
 
-    install_deps = os.environ.get("EASY_PX4_INSTALL_DEPS", "true")
-
     if not PX4_DIR.exists():
         try:
-            px4_clone = subprocess.run(
-                ["git", "clone", "https://github.com/PX4/PX4-Autopilot", "--recursive", "--no-tags"],
-                cwd=WORK_DIR,
-                check=True,
-                stdout=sys.stdout,
-                stderr=sys.stderr, 
-                text=True
-            )
+            if clone_px4 == "true":
+                git_clone = subprocess.run(
+                    ["git", "clone", "https://github.com/PX4/PX4-Autopilot", "--recursive", "--no-tags"],
+                    cwd=WORK_DIR,
+                    check=True,
+                    stdout=sys.stdout,
+                    stderr=sys.stderr, 
+                    text=True
+                )
+
+                if git_clone.returncode != 0:
+                    sys.stderr.write(git_clone.stdout)
+                    sys.stderr.write(git_clone.stderr)
+                    sys.exit(1)
 
             if install_deps == "true":
                 install_dependencies = subprocess.run(
@@ -46,8 +53,8 @@ def common_install() -> None:
                 )
 
                 if install_dependencies.returncode != 0:
-                    print(install_dependencies.stdout)
-                    print(install_dependencies.stderr)
+                    sys.stderr.write(install_dependencies.stdout)
+                    sys.stderr.write(install_dependencies.stderr)
                     sys.exit(1)
         except subprocess.CalledProcessError as e:
             print("Failed to setup PX4-Autopilot repository.")
