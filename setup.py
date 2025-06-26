@@ -34,17 +34,23 @@ def common_install() -> None:
             )
 
             install_dependencies = subprocess.run(
-                ["bash", "./Tools/setup/ubuntu.sh"],
+                ["./Tools/setup/ubuntu.sh"],
                 cwd=PX4_DIR,
                 check=True,
                 stdout=sys.stdout,
                 stderr=sys.stderr, 
                 text=True
             )
+
+            if install_dependencies.returncode != 0:
+                print(install_dependencies.stdout)
+                print(install_dependencies.stderr)
+                sys.exit(1)
         except subprocess.CalledProcessError as e:
             print("Failed to setup PX4-Autopilot repository.")
             print("stdout:", e.stdout)
             print("stderr:", e.stderr)
+            sys.exit(1)
 
 
 class InstallCommand(install):
