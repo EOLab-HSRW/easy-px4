@@ -1,5 +1,8 @@
 FROM ubuntu:22.04
 
+ENV DEBIAN_FRONTEND=noninteractive
+# required by the Official ubuntu.sh setup script (PX4)
+ENV RUNS_IN_DOCKER=true 
 ENV EASY_PX4_WORK_DIR=/home/easy
 
 RUN apt-get update && apt-get install -y \
@@ -18,4 +21,4 @@ CMD mkdir -p "${EASY_PX4_WORK_DIR}/easy-px4"
 COPY . /home/easy/easy-px4
 WORKDIR /home/easy/easy-px4
 
-RUN pip3 install .
+RUN pip3 install . --verbose
