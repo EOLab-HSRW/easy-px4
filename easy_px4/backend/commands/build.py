@@ -107,8 +107,9 @@ class BuildCommand(Command):
     def __setup_git(self, info) -> None:
 
         self.logger.debug(f"PX4 Autopilo directory: {PX4_DIR}")
+        run_command(['ls'], cwd=PX4_DIR, live=True, logger=self.logger)
 
-        restore_res = run_command(['git', 'restore', '.'], cwd=PX4_DIR)
+        restore_res = run_command(['git', 'restore', '.'], live=True, logger=self.logger, cwd=PX4_DIR)
         if restore_res.returncode != 0:
             self.logger.error(f"Failed to restore repo: {restore_res.stderr}. {restore_res.stdout}")
             sys.exit(1)
