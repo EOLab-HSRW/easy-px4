@@ -5,6 +5,9 @@ ENV EASY_PX4_WORK_DIR=/home/easy
 RUN apt-get update && apt-get install -y \
     git \
     gcc-arm-none-eabi \
+    cmake \
+    build-essential \
+    pkg-config \
     python3 \
     python3-pip && \
     rm -rf /var/lib/apt/lists/*
