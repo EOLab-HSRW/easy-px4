@@ -18,6 +18,8 @@ ENV EASY_PX4_WORK_DIR=/home/easy
 WORKDIR /home/easy
 
 COPY . /home/easy/easy-px4
+RUN chown -R easy:easy /home/easy/easy-px4 # source folder
+RUN chown -R easy:easy /home/easy/.easy_px4 # working folder
 WORKDIR /home/easy/easy-px4
 
 RUN pip3 install .
