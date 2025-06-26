@@ -32,6 +32,15 @@ def common_install() -> None:
                 stderr=sys.stderr, 
                 text=True
             )
+
+            install_dependencies = subprocess.run(
+                ["bash", "./Tools/setup/ubuntu.sh"],
+                cwd=PX4_DIR,
+                check=True,
+                stdout=sys.stdout,
+                stderr=sys.stderr, 
+                text=True
+            )
         except subprocess.CalledProcessError as e:
             print("Failed to clone repository.")
             print("stdout:", e.stdout)
