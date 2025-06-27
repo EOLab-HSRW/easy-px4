@@ -23,7 +23,7 @@ RUN mkdir -p /home/easy/.easy_px4
 RUN git clone https://github.com/PX4/PX4-Autopilot --recursive --no-tags ${EASY_PX4_WORK_DIR}/.easy_px4/PX4-Autopilot
 WORKDIR ${EASY_PX4_WORK_DIR}/.easy_px4/PX4-Autopilot
 RUN chmod +x Tools/setup/ubuntu.sh && Tools/setup/ubuntu.sh
-RUN pip3 install -r Tools/setup/requirements.txt
+RUN pip3 install --no-cache-dir --no-user -r Tools/setup/requirements.txt
 
 RUN mkdir -p "${EASY_PX4_WORK_DIR}/easy-px4"
 COPY . /home/easy/easy-px4
