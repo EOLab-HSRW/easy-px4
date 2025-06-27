@@ -5,6 +5,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV RUNS_IN_DOCKER=true 
 ENV EASY_PX4_WORK_DIR=/home/easy
 ENV EASY_PX4_CLONE_PX4=false
+ENV EASY_PX4_INSTALL_DEPS=false
 
 RUN apt-get update && apt-get install -y \
     git \
