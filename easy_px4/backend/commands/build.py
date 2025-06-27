@@ -72,6 +72,10 @@ class BuildCommand(Command):
                             action="store_true",
                             help="Overwrite existing build if present.")
 
+        parser.add_argument("--skip-compilation",
+                            action="store_true",
+                            help="Skip compilation step on PX4. Useful to pull out just the msgs.")
+
         parser.add_argument("--msgs-output",
                             type=valid_dir_path,
                             help="Directory to store extracted PX4 msgs related to your build version.")
@@ -222,6 +226,10 @@ class BuildCommand(Command):
                 shutil.copy(file, msg_dst)
             for file in srv_src.glob("*.srv"):
                 shutil.copy(file, srv_dst)
+
+        if args.skip_compilation:
+            self.logger.info("Found --skip-compilation. Skipping...")
+            sys.exit(0)
 
         if not args.overwrite and (PX4_DIR / "build" / target).exists():
             self.logger.info(f"Target {target} already built. Use --overwrite to rebuild.")
