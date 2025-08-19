@@ -31,11 +31,11 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Upgrade pip and install dependencies
-        working-directory: ./easy-px4-utils
+        working-directory: ./easy_px4_utils
         run: |
           python -m pip install --upgrade pip
           pip install '.[test]'
       - name: Run tests with pytest
-        working-directory: ./easy-px4-utils
+        working-directory: ./easy_px4_utils
         run: |
           pytest
