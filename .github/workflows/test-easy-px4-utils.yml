@@ -34,7 +34,7 @@ jobs:
         working-directory: ./easy_px4_utils
         run: |
           python -m pip install --upgrade pip
-          pip install '.[test]'
+          pip install .[test]
       - name: Run tests with pytest
         working-directory: ./easy_px4_utils
         run: |
