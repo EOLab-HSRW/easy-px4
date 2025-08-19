@@ -36,7 +36,7 @@ jobs:
       - name: Install package
         working-directory: easy_px4_utils
         run: |
-          pip install .[test]
+          pip install -e .[test]
       - name: Run tests with pytest
         run: |
           python -m pytest easy_px4_utils/tests
