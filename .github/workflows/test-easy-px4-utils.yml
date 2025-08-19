@@ -3,11 +3,14 @@ name: Test easy_px4_utils
 on:
   push:
     branches: [main]
+    paths:
+      - "easy-px4-utils/**"
+      - "easy-px4-utils/pyproject.toml"
   pull_request:
     branches: [main]
-  paths:
-    - "easy-px4-utils/**"
-    - "easy-px4-utils/pyproject.toml"
+    paths:
+      - "easy-px4-utils/**"
+      - "easy-px4-utils/pyproject.toml"
   workflow_dispatch:
 
 jobs:
