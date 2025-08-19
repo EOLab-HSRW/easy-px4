@@ -3,7 +3,7 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "easy-tool-utils"
+name = "easy-px4-tools"
 version = "0.1.0"
 description = "Utility functions for easy-px4"
 readme = "README.md"
