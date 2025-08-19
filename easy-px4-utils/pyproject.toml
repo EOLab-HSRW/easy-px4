@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "easy-tool-utils"
+version = "0.1.0"
+description = "Utility functions for easy-px4"
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [
+    { name = "Harley Lara", email = "harley.lara@outlook.com" }
+]
+maintainers = [
+  {name = "Harley Lara", email = "harley.lara@outlook.com"}
+]
+license = "MIT"
+keywords = ["PX4", "firmware", "uav", "drone", "cli", "utils"]
+dependencies = [
+    "tomli; python_version < '3.11'"
+]
+
+[tool.setuptools.packages.find]
+where = ["easy_px4_utils"]
+
+[project.urls]
+Homepage = "https://github.com/EOLab-HSRW/easy-px4.git"
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+    "mypy"
+]

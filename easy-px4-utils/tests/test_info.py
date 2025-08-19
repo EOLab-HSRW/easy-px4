@@ -7,11 +7,11 @@ else:
     import tomli as tomllib
 
 import pytest
-import easy_px4
+import easy_px4_utils
 
 def test_load_info_good():
 
-    info = easy_px4.load_info("""
+    info = easy_px4_utils.load_info("""
         name = "drone"
         id = 12345
         vendor = "px4"
@@ -20,7 +20,7 @@ def test_load_info_good():
         custom_fw_version = "0.0.2"
     """)
 
-    info = easy_px4.load_info("""
+    info = easy_px4_utils.load_info("""
         name = "drone"
         id = 12345
         vendor = "px4"
@@ -31,13 +31,13 @@ def test_load_info_good():
     """)
 
     info_test_file = Path(__file__).resolve().parent.parent / "demos/protoflyer/info.toml"
-    easy_px4.load_info(info_test_file)
-    easy_px4.load_info(str(info_test_file))
+    easy_px4_utils.load_info(info_test_file)
+    easy_px4_utils.load_info(str(info_test_file))
 
 def test_load_info_missing_key():
 
     with pytest.raises(KeyError):
-        easy_px4.load_info("""
+        easy_px4_utils.load_info("""
             name = "drone"
             id = 12345
             vendor = "px4"
@@ -47,7 +47,7 @@ def test_load_info_missing_key():
 
 
 def test_load_info_single_component():
-    info = easy_px4.load_info("""
+    info = easy_px4_utils.load_info("""
         name = "drone"
         id = 12345
         vendor = "px4"
@@ -58,7 +58,7 @@ def test_load_info_single_component():
     """)
 
 def test_load_info_list_components():
-    info = easy_px4.load_info("""
+    info = easy_px4_utils.load_info("""
         name = "drone"
         id = 12345
         vendor = "px4"
@@ -72,7 +72,7 @@ def test_load_info_bad():
 
     with pytest.raises(tomllib.TOMLDecodeError):
         # incorrect formating name
-        easy_px4.load_info("""
+        easy_px4_utils.load_info("""
             name = drone
             id = "12345"
             vendor = "px4"
@@ -83,7 +83,7 @@ def test_load_info_bad():
 
 
     with pytest.raises(TypeError):
-        easy_px4.load_info("""
+        easy_px4_utils.load_info("""
             name = 'drone'
             id = '12345'
             vendor = "px4"
@@ -94,7 +94,7 @@ def test_load_info_bad():
 
     with pytest.raises(tomllib.TOMLDecodeError):
         # incorrect formating vendor
-        easy_px4.load_info("""
+        easy_px4_utils.load_info("""
             name = drone
             id = '12345'
             vendor = px4
@@ -105,7 +105,7 @@ def test_load_info_bad():
 
     with pytest.raises(TypeError):
         # extra keys that is not part of the info structure
-        easy_px4.load_info("""
+        easy_px4_utils.load_info("""
             name = "drone"
             id = 12345
             vendor = "px4"
@@ -126,7 +126,7 @@ valid_px4_versions = [
 
 @pytest.mark.parametrize("version", valid_px4_versions)
 def test_valid_px4_versions(version):
-    easy_px4.load_info(f"""
+    easy_px4_utils.load_info(f"""
         name = "drone"
         id = 12345
         vendor = "px4"
@@ -149,7 +149,7 @@ invalid_px4_versions = [
 @pytest.mark.parametrize("version", invalid_px4_versions)
 def test_invalid_px4_versions(version):
     with pytest.raises(ValueError):
-        easy_px4.load_info(f"""
+        easy_px4_utils.load_info(f"""
             name = "drone"
             id = 12345
             vendor = "px4"
@@ -168,7 +168,7 @@ valid_custom_fw_versions = [
 
 @pytest.mark.parametrize("version", valid_custom_fw_versions)
 def test_valid_custom_fw_versions(version):
-    easy_px4.load_info(f"""
+    easy_px4_utils.load_info(f"""
         name = "drone"
         id = 12345
         vendor = "px4"
@@ -186,7 +186,7 @@ invalid_custom_fw_versions = [
 @pytest.mark.parametrize("version", invalid_custom_fw_versions)
 def test_invalid_custom_fw_versions(version):
     with pytest.raises(ValueError):
-        easy_px4.load_info(f"""
+        easy_px4_utils.load_info(f"""
             name = "drone"
             id = 12345
             vendor = "px4"

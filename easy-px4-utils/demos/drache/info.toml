@@ -1,0 +1,8 @@
+name = "drache"
+id = 22199
+vendor = "px4"
+model = "fmu-v6x"
+px4_version = "v1.16.0-rc1"
+px4_commit = "main"
+custom_fw_version = "1.2.3-alpha4"
+components = ["radiomaster_tx16s"]
