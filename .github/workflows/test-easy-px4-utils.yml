@@ -39,4 +39,4 @@ jobs:
           pip install .[test]
       - name: Run tests with pytest
         run: |
-          pytest easy_px4_utils/tests
+          python -m pytest easy_px4_utils/tests
