@@ -6,8 +6,8 @@ on:
   pull_request:
     branches: [main]
   paths:
-      - "easy-px4-utils/**"
-      - "easy-px4-utils/pyproject.toml"
+    - "easy-px4-utils/**"
+    - "easy-px4-utils/pyproject.toml"
   workflow_dispatch:
 
 jobs:
