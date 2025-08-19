@@ -6,13 +6,13 @@ on:
     paths:
       - "easy-px4-utils/**"
       - "easy-px4-utils/pyproject.toml"
-      - "test-easy-px4-utils.yml"
+      - ".github/workflows/test-easy-px4-utils.yml"
   pull_request:
     branches: [main]
     paths:
       - "easy-px4-utils/**"
       - "easy-px4-utils/pyproject.toml"
-      - "test-easy-px4-utils.yml"
+      - ".github/workflows/test-easy-px4-utils.yml"
   workflow_dispatch:
 
 jobs:
