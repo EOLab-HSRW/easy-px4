@@ -5,6 +5,9 @@ on:
     branches: [main]
   workflow_dispatch:
 
+concurrency:
+  cancel-in-progress: true
+
 jobs:
   build-amd64:
     runs-on: ubuntu-22.04
