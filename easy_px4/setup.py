@@ -93,7 +93,7 @@ setup(
     python_requires='>=3.9',
     install_requires=[
         'tomli',
-        "easy_px4_utils @ git+https://github.com/EOLab-HSRW/easy-px4.git@main#subdirectory=easy_px4_utils",
+        'easy_px4_utils',
     ],
     extras_require={
         "test": dev_minimal,
