@@ -1,4 +1,4 @@
-name: Test easy_px4_utils
+name: Test & Publish easy_px4_utils
 
 on:
   push:
@@ -17,7 +17,7 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-${{ matrix.ubuntu-version }}
     strategy:
       fail-fast: false
       matrix:
@@ -41,3 +41,25 @@ jobs:
         working-directory: easy_px4_utils
         run: |
           python -m pytest
+
+  publish:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: test
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build package
+        working-directory: easy_px4_utils
+        run: |
+          pip install --upgrade pip build
+          python -m build
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN }}
+          packages-dir: easy_px4_utils/dist
+
