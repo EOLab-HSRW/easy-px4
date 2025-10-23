@@ -30,4 +30,5 @@ RUN mkdir -p "${EASY_PX4_WORK_DIR}/easy-px4"
 COPY . /home/easy/easy-px4
 WORKDIR /home/easy/easy-px4
 
-RUN pip3 install . --verbose
+RUN pip3 install ./easy_px4_utils --verbose
+RUN pip3 install ./easy_px4 --verbose
