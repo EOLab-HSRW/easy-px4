@@ -4,8 +4,9 @@ import subprocess
 from pathlib import Path
 from argparse import ArgumentParser, Namespace
 
+from easy_px4_utils import load_directory, valid_dir_path
+
 from .command import Command
-from ..utils.directory import load_directory, valid_dir_path
 from ..paths import PX4_DIR
 from ..runner import run_command
 

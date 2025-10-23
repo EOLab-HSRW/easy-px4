@@ -1,6 +1,6 @@
 from typing import Union
 from pathlib import Path
-from .backend.utils.info import load_info_dict
+from easy_px4_utils import load_info_dict
 
 from .backend.paths import PX4_DIR, WORK_DIR
 
