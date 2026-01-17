@@ -253,14 +253,16 @@ class BuildCommand(Command):
 
         airframe_file = f"{info.id}_{info.name}"
         target_airframe = airframes / airframe_file
-        airframe_post_file = f"{info.id}_{info.name}.post"
-        target_airframe_post = airframes / airframe_post_file
         cmake_airframes = airframes / "CMakeLists.txt"
 
         shutil.copy2(args.path / directory.params_file, target_airframe)
-        shutil.copy2(args.path / directory.params_post_file, target_airframe_post)
         self.__prepend_insertion(cmake_airframes, airframe_match, airframe_file)
-        self.__prepend_insertion(cmake_airframes, airframe_match, airframe_post_file)
+
+        if (directory.params_post_file is not None):
+            airframe_post_file = f"{info.id}_{info.name}.post"
+            target_airframe_post = airframes / airframe_post_file
+            shutil.copy2(args.path / directory.params_post_file, target_airframe_post)
+            self.__prepend_insertion(cmake_airframes, airframe_match, airframe_post_file)
 
         if args.comps is not None:
             if info.components is not None and self.__validate_comps(info.components, args.comps):
