@@ -82,7 +82,7 @@ dev_minimal = [
 
 setup(
     name=__package__,
-    version='0.0.4',
+    version='0.0.5',
     url='https://github.com/EOLab-HSRW/easy-px4.git',
     author='Harley Lara',
     author_email='harley.lara@outlook.com',
