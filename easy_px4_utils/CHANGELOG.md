@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.4
+
+- Add support for `params.airframe.post`. This is similar in functionality to `params.airframe`, but it is executed later during system boot.
+
 ## 0.1.2
 
 - expose `load_info_dict` in the api

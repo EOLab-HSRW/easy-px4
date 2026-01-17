@@ -39,6 +39,7 @@ class SITLDirectoryStructure(BaseDirectoryStructure):
             FileRule("info_file", "info.toml"),
             FileRule("params_file", "params.airframe"),
             FileRule("modules_file", "sitl.modules"),
+            FileRule("params_post_file", "params.airframe.post", required=False),
         ]
 
 
@@ -49,6 +50,7 @@ class FirmwareDirectoryStructure(BaseDirectoryStructure):
             FileRule("info_file", "info.toml"),
             FileRule("params_file", "params.airframe"),
             FileRule("modules_file", "board.modules"),
+            FileRule("params_post_file", "params.airframe.post", required=False),
         ]
 
 def valid_dir_path(path: Union[str, Path]) -> Path:
