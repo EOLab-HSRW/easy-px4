@@ -81,7 +81,15 @@ class Directory:
         self.__structure = self.__validate_structure()
 
         for rule in self.__structure.get_rules():
-            setattr(self, rule.prop_name, rule.file_name)
+            file_path = self.directory / rule.file_name
+
+            if file_path.is_file():
+                setattr(self, rule.prop_name, rule.file_name)
+            else:
+                if rule.required:
+                    # validate() should already prevent this, but keep it safe.
+                    raise FileNotFoundError(f"Missing required file: {rule.file_name}")
+                setattr(self, rule.prop_name, None)
 
         self.__info_manager = load_info(self.directory / self.__structure.info_file)
         self.__info = self.__info_manager.get_info()

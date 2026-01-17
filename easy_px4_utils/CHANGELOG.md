@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.5
+
+- Fix problem with directory validation, check for optional or required files.
+
 ## 0.1.4
 
 - Add support for `params.airframe.post`. This is similar in functionality to `params.airframe`, but it is executed later during system boot.
