@@ -7,8 +7,10 @@ A simple automation tool to build [PX4](https://github.com/PX4/PX4-Autopilot) fi
 
 ## Install
 
+(Recommended) Using docker:
+
 ```
-pip install git+https://github.com/EOLab-HSRW/easy-px4.git@main#egg=easy_px4
+docker pull ghcr.io/eolab-hsrw/easy-px4:ubuntu-22.04
 ```
 
 ## How to Use
