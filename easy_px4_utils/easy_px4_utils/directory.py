@@ -40,6 +40,7 @@ class SITLDirectoryStructure(BaseDirectoryStructure):
             FileRule("params_file", "params.airframe"),
             FileRule("modules_file", "sitl.modules"),
             FileRule("params_post_file", "params.airframe.post", required=False),
+            FileRule("dds_topics_file", "dds_topics.yaml", required=False),
         ]
 
 
@@ -51,6 +52,7 @@ class FirmwareDirectoryStructure(BaseDirectoryStructure):
             FileRule("params_file", "params.airframe"),
             FileRule("modules_file", "board.modules"),
             FileRule("params_post_file", "params.airframe.post", required=False),
+            FileRule("dds_topics_file", "dds_topics.yaml", required=False),
         ]
 
 def valid_dir_path(path: Union[str, Path]) -> Path:
