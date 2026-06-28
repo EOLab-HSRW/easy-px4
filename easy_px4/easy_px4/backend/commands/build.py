@@ -112,6 +112,25 @@ class BuildCommand(Command):
             sys.exit(1)
         return True
 
+    def __copy_dds_topics(self, directory, settings_path: Path) -> None:
+        dds_topics_file = getattr(directory, "dds_topics_file", None)
+
+        if dds_topics_file is None:
+            self.logger.debug("No custom dds_topics.yaml provided. Using PX4 default.")
+            return
+
+        source = settings_path / dds_topics_file
+        target = PX4_DIR / Path("src/modules/uxrce_dds_client/dds_topics.yaml")
+
+        if not target.is_file():
+            self.logger.error(
+                f"PX4 dds_topics.yaml target does not exist: {target}. "
+                "The selected PX4 version may have changed the uXRCE-DDS path."
+            )
+            sys.exit(1)
+
+        self.logger.info(f"Applying custom DDS topics: {source} -> {target}")
+        shutil.copy2(source, target)
 
     def __setup_git(self, info) -> None:
 
@@ -237,6 +256,7 @@ class BuildCommand(Command):
             sys.exit(0)
 
         self.__setup_git(info)
+        self.__copy_dds_topics(directory, args.path)
 
         if args.install_dependencies:
             self.logger.info("Installing PX4 dependencies...")

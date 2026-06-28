@@ -34,6 +34,7 @@ newbie/
 ├─ info.toml (required)
 ├─ params.airframe (required)
 ├─ params.airframe.post (optional)
+├─ dds_topics.yaml (optional)
 ├─ board.modules (required only in --type firmware builds)
 ├─ sitl.modules (required only in --type sitl builds (software-in-the-loop))
 ```
@@ -44,6 +45,7 @@ Description of files:
 - `params.airframe.post`: Same as `params.airframe` but runs late during system boot.
 - `board.modules`: enable or disable modules/drivers in firmware. This is **always** agregated to the **default PX4 modules** of your `vendor` and `model` combination as defined in your `info.toml`.
 - `sitl.modules`: enable or disable modules/drivers in the software-in-the-loop (SITL) firmware.
+- `dds_topics.yaml`: optional replacement for PX4's `src/modules/uxrce_dds_client/dds_topics.yaml`. If present, it is copied into the checked-out PX4 source before compilation, changing the ROS 2/DDS topics compiled into `uxrce_dds_client`.
 
 ### Info File
 
@@ -154,6 +156,3 @@ This tool was born from the need to generate custom firmwares for the self-built
 ## Contributions
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md).
-
-TODO:
-- [ ] Add support to `dds_topics.yaml` customization.
